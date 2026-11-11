@@ -114,6 +114,28 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .ckey{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;font-weight:700;margin:6px 2px}
 .sup{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sup div{background:#FFF7DD;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;text-align:center}.sup span{font-size:30px}.sup small{font-size:12px;color:#4a5a73;font-weight:700}.sup b{font-size:17px;color:var(--navy)}
 .pg{display:grid;grid-template-columns:1fr 90px 64px;gap:8px;align-items:center;padding:5px 0;font-size:14px;font-weight:700}.pgb{height:12px;background:#E1EAF3;border-radius:8px;overflow:hidden}.pgb div{height:100%}.pgs{text-align:right;color:#4a5a73;font-size:13px}
+.hook{background:#FFF7DD;border-radius:12px;padding:10px;margin-top:8px}.ht{font-weight:800;color:var(--navy)}.chant{font-style:italic;margin-top:4px;color:#4a3800}
+.gamerow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.gamerow .zone{padding:10px 8px;align-items:center;text-align:center}.gamerow .zt{font-size:15px}
+.tcard{background:#fff;border:2.5px solid var(--cc);border-radius:16px;margin:12px 0;overflow:hidden}.tch{background:color-mix(in srgb,var(--cc) 30%,white);font-weight:800;font-size:19px;padding:8px 12px;color:var(--navy)}.tbody{padding:10px 12px}
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.fchip{border-radius:16px;padding:3px 10px;font-size:14px;font-weight:700}.fchip.mtn{background:#F6EDE4}.fchip.water{background:#E3F0FF}.tip{font-size:15px}
+.mstat{display:flex;gap:14px;justify-content:center;font-weight:700;margin:6px 0}
+.mgame{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;perspective:800px}
+.mcard{position:relative;height:96px;border:0;background:none;padding:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .4s}
+.mcard.up{transform:rotateY(180deg)}
+.mf{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;font-weight:800;font-size:13px;line-height:1.15;padding:4px;text-align:center}
+.mf i{font-style:normal;font-size:26px}
+.mback{background:#4F8EF7;color:#fff;font-size:36px;border:3px solid #fff;box-shadow:0 2px 0 var(--line)}
+.mfront{transform:rotateY(180deg);border:3px solid var(--line);background:#fff}
+.mfront.mcont{background:color-mix(in srgb,var(--cc) 35%,white);border-color:var(--cc)}.mfront.mtn{background:#F6EDE4}.mfront.water{background:#E3F0FF}
+.mcard.got .mfront{border-color:var(--good);box-shadow:0 0 0 3px #9ad3a8}
+.sortcard{background:#fff;border:3px solid var(--line);border-radius:18px;padding:14px;text-align:center;margin:8px 0;display:flex;flex-direction:column;align-items:center}
+.sortcard i{font-style:normal;font-size:40px}.sortcard b{font-size:22px;color:var(--navy)}.sortcard small{color:#4a5a73}
+.sortcard.pop{animation:popin .25s}
+.bins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bin{border:2.5px solid var(--cc);background:color-mix(in srgb,var(--cc) 22%,white);border-radius:14px;padding:10px 6px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px;justify-content:center}.bin i{font-style:normal;font-size:22px}
+.bin:last-child{grid-column:1/3}
+.bin.flash{background:#B8F0C4}.bin.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .found{font-weight:800;text-align:center;color:var(--navy)}
 .vlist{display:grid;gap:6px;margin-top:6px}.vi{display:flex;gap:8px;align-items:center;background:#E7F6EC;border-radius:10px;padding:6px 10px;font-size:15px;animation:popin .3s}.vi span{font-size:26px}
 
@@ -291,7 +313,7 @@ function addStar(n = 1) { S.stars += n; save(); const e = document.getElementByI
 
 function go(view, arg) {
   window.scrollTo(0, 0);
-  ({ home, explore, globe: () => globe(), bonus, progress, maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
+  ({ home, explore, globe: () => globe(), bonus, progress, tricks: () => tricks(), match: () => matchGame(), sortit: () => sortGame(), maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
 }
 
 function home() {
@@ -301,6 +323,7 @@ function home() {
     { v: 'maplab', e: '📍', t: 'Map lab', s: 'Find, name, and spell places', c: '#F6A04D' },
     { v: 'wordlab', e: '🔤', t: 'Word lab', s: 'Equator, hemisphere, and more', c: '#4F8EF7' },
     { v: 'featlab', e: '⛰️', t: 'Feature quest', s: 'Rivers and mountains', c: '#7CC35A' },
+    { v: 'tricks', e: '🧠', t: 'Mountain and river tricks', s: 'Memory tricks, memory match, and Sort it', c: '#E0A100' },
     { v: 'lifelab', e: '🏡', t: 'Life lab', s: 'How land changes how we live', c: '#EF6F5E' },
     { v: 'bonus', e: '⭐', t: 'Bonus facts', s: 'Extra facts for super explorers', c: '#7FB8E6' },
     { v: 'test', e: '🏆', t: 'Practice test', s: 'Like Friday\'s test', c: '#E0A100' }
@@ -456,7 +479,10 @@ function featlab(sel) {
   <div class="card"><div class="ch" style="border-color:${PLACES[c].color}">${PLACES[c].emoji} ${PLACES[c].name}</div>
   <div class="mapbox zoom" id="fz">${mapSVG({ uid: 'f', cHi: [c], dim: c })}</div>
   <div class="flist">${ms.map(m => `<div class="fi ${m.t}"><span class="fn">${m.n}</span>${m.t === 'mtn' ? '⛰️' : '💧'} ${m.f}</div>`).join('')}</div>
-  <div class="tiny">🌊 Oceans nearby: ${FEATURES[c].oceans}</div></div>
+  <div class="tiny">🌊 Oceans nearby: ${FEATURES[c].oceans}</div>
+  <div class="hook"><div class="ht">🧠 Memory trick: ${HOOKS[c].t} ${sayBtn(HOOKS[c].t + '. ' + HOOKS[c].chant)}</div><div class="chant">🎵 ${HOOKS[c].chant}</div></div></div>
+  <div class="gamerow"><button class="zone" data-go="tricks" style="--zc:#E0A100"><span class="ze">🧠</span><span class="zt">All tricks</span></button><button class="zone" data-go="match" style="--zc:#4F8EF7"><span class="ze">🃏</span><span class="zt">Memory match</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button></div>
+  ${featMasteryHTML()}
   <button class="wide go" id="startF">Start Feature quest quiz ▶</button>`;
   bindGo(app());
   const svg = $('#fz svg'); const path = svg.querySelector(`[data-id="${c}"]`); const bb = path.getBBox();
@@ -471,16 +497,36 @@ function featlab(sel) {
   svg.insertAdjacentHTML('beforeend', ms.map(m => `<g pointer-events="none">${m.t === 'mtn' ? `<polygon points="${m.p[0]},${m.p[1] - r * 1.25} ${m.p[0] - r * 1.15},${m.p[1] + r * 0.85} ${m.p[0] + r * 1.15},${m.p[1] + r * 0.85}" fill="#7A5230" stroke="#fff" stroke-width="${r / 6}"/>` : `<circle cx="${m.p[0]}" cy="${m.p[1]}" r="${r}" fill="#1D6FD8" stroke="#fff" stroke-width="${r / 6}"/>`}<text x="${m.p[0]}" y="${m.p[1] + (m.t === 'mtn' ? r * 0.15 : 0)}" font-size="${r * 1.1}" font-weight="800" fill="#fff" text-anchor="middle" dominant-baseline="central">${m.n}</text></g>`).join(''));
   $('#startF').onclick = () => runRound({ title: 'Feature quest', qs: featQs(10), key: 'featlab', mode: 'practice', again: () => featlab(c) });
 }
+const HOOKS = {
+  namerica: { t: 'Our home team', tip: 'The <b>Appalachians</b> are right here in Virginia! The <b>Rockies</b> are out west. <b>Miss</b> and <b>Mo</b> are the Mississippi and Missouri Rivers. The <b>Rio Grande</b> runs between the U.S. and Mexico. The <b>Great Lakes</b> are up north.', chant: 'Rocky, Appalachian, mountains tall. Miss and Mo, Great Lakes, Rio Grande: that is all!' },
+  samerica: { t: 'The A-team', tip: '<b>A</b>ndes and <b>A</b>mazon both start with A, just like South <b>A</b>merica. The Amazon company was named after this giant river!', chant: 'Andes, Amazon, the A-team pair. South America keeps them there!' },
+  europe: { t: 'Daniel Rides a Tiger in the Alps', tip: '<b>D</b>aniel <b>R</b>ides a <b>T</b>iger = <b>D</b>anube, <b>R</b>hine, and <b>T</b>iber Rivers. He rides up the <b>Alps</b>. The <b>Mediterranean Sea</b> is to the south.', chant: 'Daniel rides a tiger, up the Alps so high. Danube, Rhine, and Tiber in Europe flow by!' },
+  asia: { t: 'Y rivers and the tallest of ALL', tip: '<b>Huang He</b> means <b>Y</b>ellow River. The other one is the <b>Y</b>angtze. The <b>Him-ALL-ayas</b> are the tallest of all, with <b>Mount Everest</b> on top.', chant: 'Yellow, Yangtze, Y and Y. The Himalayas touch the sky!' },
+  africa: { t: 'Two N rivers', tip: '<b>N</b>ile and <b>N</b>iger both start with N. The <b>Atlas</b> Mountains share a name with an atlas map book. <b>Mount Kilimanjaro</b> is the tallest mountain in Africa.', chant: 'Nile and Niger, N and N. Atlas, Kilimanjaro: Africa again!' },
+  australia: { t: 'Two GREATs', tip: '<b>Great</b> Barrier Reef and <b>Great</b> Dividing Range. The <b>Australian</b> Alps have the name right in them.', chant: 'Great Reef, Great Range, two GREATs, hooray! Australian Alps are there to stay!' },
+  antarctica: { t: 'The name is in the name', tip: 'Trans<b>antarctic</b> Mountains have Antarctica right in the name. The <b>South</b>ern Ocean goes all around it at the bottom of the world.', chant: 'Transantarctic tells you where. The Southern Ocean circles there!' }
+};
+const MATCH_LIST = FEATURE_LIST.concat([{ f: 'Southern Ocean', c: 'antarctica', t: 'water' }]);
+const fKey = f => 'f:' + f;
+function pickFeature(pool = FEATURE_LIST, avoid = []) {
+  const w = pool.map(x => avoid.includes(x.f) ? 0 : 1 + Math.max(0, 3 - ((S.m[fKey(x.f)] || {}).s || 0)) * 2);
+  let tot = w.reduce((a, b) => a + b, 0), r = Math.random() * tot, j = 0; while (r > w[j]) { r -= w[j]; j++; }
+  return pool[Math.min(j, pool.length - 1)];
+}
+
+function featMasteryHTML() {
+  return `<div class="card"><div class="ch">🎯 Mountains and rivers you know</div><div class="mgrid">${MATCH_LIST.map(x => { const st = (S.m[fKey(x.f)] || {}).s || 0; return `<div class="mi ${st >= 3 ? 'm3' : st >= 1 ? 'm1' : 'm0'}">${x.t === 'mtn' ? '⛰️' : '💧'} ${x.f}<span>${st >= 3 ? '✅' : st >= 1 ? '🌱' : '…'}</span></div>`; }).join('')}</div><p class="tiny">✅ = right 3 times in a row. The ones you miss come back more often.</p></div>`;
+}
 function featQ() {
-  const f = pick(FEATURE_LIST);
+  const f = pickFeature();
   const type = Math.random();
   if (type < 0.5) {
     const wrong = shuffle(CONTS.filter(k => k !== f.c)).slice(0, 3);
-    return { kind: 'mc', prompt: `${f.t === 'mtn' ? '⛰️' : '💧'} Where is the <b>${f.f}</b>?`, options: shuffle([f.c].concat(wrong)).map(k => ({ v: k, t: PLACES[k].emoji + ' ' + PLACES[k].name })), answer: f.c, why: `The ${f.f} is in ${PLACES[f.c].name}.` };
+    return { kind: 'mc', prompt: `${f.t === 'mtn' ? '⛰️' : '💧'} Where is the <b>${f.f}</b>?`, options: shuffle([f.c].concat(wrong)).map(k => ({ v: k, t: PLACES[k].emoji + ' ' + PLACES[k].name })), answer: f.c, id: fKey(f.f), why: `The ${f.f} is in ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!` };
   }
   const others = shuffle(FEATURE_LIST.filter(x => x.t === f.t && x.c !== f.c && !(f.f === 'Mount Everest' && x.f === 'Himalaya Mountains'))).filter((x, i, a) => a.findIndex(y => y.c === x.c) === i).slice(0, 3);
   const kind = f.t === 'mtn' ? 'mountain' : 'body of water';
-  return qMC(`Which ${kind} is in <b>${PLACES[f.c].name}</b>?`, f.f, others.map(o => o.f), `The ${f.f} is in ${PLACES[f.c].name}.`, { emoji: PLACES[f.c].emoji, map: { uid: 'q', cHi: [f.c], dim: f.c } });
+  return qMC(`Which ${kind} is in <b>${PLACES[f.c].name}</b>?`, f.f, others.map(o => o.f), `The ${f.f} is in ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!`, { id: fKey(f.f), emoji: PLACES[f.c].emoji, map: { uid: 'q', cHi: [f.c], dim: f.c } });
 }
 function featQs(n) {
   const extra = [
@@ -559,7 +605,9 @@ function progress() {
   const rows = G.map(([k, n, tot]) => { const b = S.best[k]; const pct = b == null ? 0 : b / tot; return `<div class="pg"><div class="pgn">${n}</div><div class="pgb"><div style="width:${Math.round(pct * 100)}%;background:${pct >= 0.9 ? '#3FB8AF' : pct >= 0.7 ? '#F6C04D' : '#F6A04D'}"></div></div><div class="pgs">${b == null ? 'not yet' : b + ' / ' + tot}</div></div>`; }).join('');
   app().innerHTML = header('My progress') + `
   <div class="card center"><div style="font-size:54px">⭐</div><h2>${S.stars} stars earned</h2><p class="tiny">Best scores so far. Can you fill every bar?</p></div>
-  <div class="card"><div class="ch">🏅 Best scores</div>${rows}</div>
+  <div class="card"><div class="ch">🏅 Best scores</div>${rows}
+    <div class="pg"><div class="pgn">🃏 Memory match</div><div></div><div class="pgs">${S.best.matchMoves != null ? S.best.matchMoves + ' moves' : 'not yet'}</div></div>
+    <div class="pg"><div class="pgn">🗂️ Sort it</div><div></div><div class="pgs">${S.best.sortTime != null ? S.best.sortTime + ' sec' : 'not yet'}</div></div></div>
   ${masteryHTML()}
   <button class="wide" data-go="home">Home 🏠</button>`;
   bindGo(app());
@@ -584,7 +632,8 @@ function test() {
 function printView() {
   const files = [
     ['World-Geography-Study-Guide.pdf', '📘 Study guide + practice pack', 'Colorful map, words, features, life and land, then 5 practice pages and a practice test.'],
-    ['World-Geography-Answer-Key.pdf', '🔑 Answer key', 'For a grown-up to check the practice pages.']
+    ['World-Geography-Answer-Key.pdf', '🔑 Answer key', 'For a grown-up to check the practice pages.'],
+    ['World-Geography-Memory-Tricks.pdf', '🧠 Mountain and river tricks', 'One page for the fridge: a memory trick and a chant for every continent.']
   ];
   app().innerHTML = header('Print center') + `
   <p class="lead">These are the same things you practice here, on paper.</p>
@@ -1098,6 +1147,108 @@ function mountainSVG() {
   ${em(40, 150, 30, '🏠')}${em(78, 168, 22, '🌽')}<text x="45" y="190" font-size="13" font-weight="800" text-anchor="middle" fill="#A32020">Red Village</text>
   ${em(310, 148, 30, '🛖')}${em(335, 170, 22, '🍚')}<text x="312" y="190" font-size="13" font-weight="800" text-anchor="middle" fill="#0C447C">Blue Village</text>
   <text id="walker" x="70" y="150" font-size="26" text-anchor="middle" dominant-baseline="central">🚶</text></svg>`;
+}
+</script>
+<script>function contColor(k) { return k === 'antarctica' ? '#8DB8D6' : PLACES[k].color; }
+function featIcon(x) { return x.t === 'mtn' ? '⛰️' : '💧'; }
+function featsOf(c) { return MATCH_LIST.filter(x => x.c === c); }
+
+function tricks() {
+  app().innerHTML = header('Mountain and river tricks') + `
+  <p class="lead">Spot the pattern for each continent. Say the chant out loud 3 times!</p>
+  <div class="gamerow"><button class="zone" data-go="match" style="--zc:#4F8EF7"><span class="ze">🃏</span><span class="zt">Memory match</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button><button class="zone" data-go="featlab" style="--zc:#7CC35A"><span class="ze">⛰️</span><span class="zt">See the map</span></button></div>
+  ${CONTS.map(c => `<div class="tcard" style="--cc:${contColor(c)}">
+    <div class="tch">${PLACES[c].emoji} ${PLACES[c].name}</div>
+    <div class="tbody"><div class="ht">🧠 ${HOOKS[c].t} ${sayBtn(PLACES[c].name + '. ' + HOOKS[c].t + '. ' + HOOKS[c].chant)}</div>
+    <div class="fchips">${featsOf(c).map(x => `<span class="fchip ${x.t}">${featIcon(x)} ${x.f}</span>`).join('')}</div>
+    <div class="tip">${HOOKS[c].tip}</div>
+    <div class="chant">🎵 ${HOOKS[c].chant}</div></div></div>`).join('')}
+  <div class="card"><div class="ch">🖐️ Try it with your hands</div><p>Draw a blank world map. Draw brown triangles ⛰️ for mountains and blue squiggles 💧 for rivers. Say each name out loud as you draw. Then teach the tricks to someone in your family!</p></div>
+  <button class="wide go big" data-go="match">Play Memory match 🃏</button>`;
+  bindGo(app());
+}
+
+function matchGame() {
+  const conts = shuffle(CONTS).slice(0, 6);
+  const pairs = conts.map(c => { const pool = featsOf(c); return pickFeature(pool); });
+  const cards = shuffle(pairs.flatMap((f, i) => [{ p: i, side: 'f', f }, { p: i, side: 'c', c: f.c }]));
+  let open = [], done = new Set(), moves = 0, lock = false;
+  app().innerHTML = header('Memory match') + `
+  <p class="lead">Flip two cards. Match each mountain or river ⛰️💧 with its continent!</p>
+  <div class="mstat"><span>Moves: <b id="mv">0</b></span><span>Pairs: <b id="pr">0</b> / 6</span>${S.best.matchMoves != null ? `<span>Best: <b>${S.best.matchMoves}</b></span>` : ''}</div>
+  <div class="mgame">${cards.map((k, i) => `<button class="mcard" data-i="${i}" aria-label="Card"><span class="mf mback">🌍</span><span class="mf mfront ${k.side === 'c' ? 'mcont' : 'mfeat ' + k.f.t}" style="${k.side === 'c' ? '--cc:' + contColor(k.c) : ''}">${k.side === 'c' ? `<i>${PLACES[k.c].emoji}</i>${PLACES[k.c].name}` : `<i>${featIcon(k.f)}</i>${k.f.f}`}</span></button>`).join('')}</div>
+  <div id="fb" class="fb"></div>`;
+  bindGo(app());
+  const els = [...app().querySelectorAll('.mcard')];
+  els.forEach(el => el.onclick = () => {
+    const i = +el.dataset.i; const k = cards[i];
+    if (lock || done.has(k.p) || open.includes(i)) return;
+    el.classList.add('up'); open.push(i);
+    if (open.length < 2) return;
+    moves++; $('#mv').textContent = moves;
+    const [a, b] = open.map(j => cards[j]);
+    if (a.p === b.p && a.side !== b.side) {
+      done.add(a.p); open.forEach(j => els[j].classList.add('got')); open = [];
+      const f = pairs[a.p]; mark(fKey(f.f), true);
+      $('#pr').textContent = done.size;
+      $('#fb').className = 'fb good'; $('#fb').innerHTML = `${featIcon(f)} <b>${f.f}</b> → ${PLACES[f.c].emoji} ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!`;
+      if (done.size === 6) setTimeout(finish, 700);
+    } else {
+      lock = true;
+      $('#fb').className = 'fb bad'; $('#fb').innerHTML = 'Not a match. Remember where they are!';
+      setTimeout(() => { open.forEach(j => els[j].classList.remove('up')); open = []; lock = false; }, 1000);
+    }
+  });
+  function finish() {
+    const best = S.best.matchMoves; const nb = best == null || moves < best; if (nb) S.best.matchMoves = moves; save();
+    const st = moves <= 9 ? 3 : moves <= 13 ? 2 : 1; addStar(st); confetti();
+    app().innerHTML = header('Memory match') + `<div class="card center"><div style="font-size:60px">🃏🎉</div><h2>All 6 pairs in ${moves} moves!</h2><div class="starrow">${'⭐'.repeat(st)}${'☆'.repeat(3 - st)}</div><p>${nb ? 'New best!' : 'Best: ' + best + ' moves. Can you beat it?'}</p><p class="tiny">6 moves is perfect. 9 or fewer gets 3 stars.</p></div>
+    <div class="card"><div class="ch">You matched</div>${pairs.map(f => `<div class="mi" style="margin:4px 0">${featIcon(f)} ${f.f}<span>${PLACES[f.c].emoji} ${PLACES[f.c].name}</span></div>`).join('')}</div>
+    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="tricks">Memory tricks 🧠</button><button class="wide" data-go="home">Home 🏠</button>`;
+    bindGo(app()); $('#again').onclick = matchGame;
+  }
+}
+
+function sortGame() {
+  const queue = []; const used = [];
+  for (const c of CONTS) { const f = pickFeature(featsOf(c)); queue.push(f); used.push(f.f); }
+  while (queue.length < 12) { const f = pickFeature(MATCH_LIST, used); queue.push(f); used.push(f.f); }
+  let items = shuffle(queue), misses = 0, t0 = null, timer = null, missed = new Set();
+  const total = items.length;
+  app().innerHTML = header('Sort it') + `
+  <p class="lead">Tap the continent where each mountain or river belongs. Go fast!</p>
+  <div class="mstat"><span>⏱️ <b id="tm">0</b> sec</span><span>Left: <b id="left">${total}</b></span>${S.best.sortTime != null ? `<span>Best: <b>${S.best.sortTime}</b> sec</span>` : ''}</div>
+  <div class="sortcard" id="sc"></div>
+  <div id="hint" class="err" style="text-align:center;min-height:22px"></div>
+  <div class="bins">${CONTS.map(c => `<button class="bin" data-c="${c}" style="--cc:${contColor(c)}"><i>${PLACES[c].emoji}</i>${PLACES[c].name}</button>`).join('')}</div>`;
+  bindGo(app());
+  const show = () => { const f = items[0]; $('#sc').innerHTML = `<i>${featIcon(f)}</i><b>${f.f}</b><small>${f.t === 'mtn' ? 'mountains' : 'water'}</small>`; $('#sc').classList.remove('pop'); void $('#sc').offsetWidth; $('#sc').classList.add('pop'); $('#left').textContent = items.length; };
+  show();
+  app().querySelectorAll('.bin').forEach(b => b.onclick = () => {
+    if (!items.length) return;
+    if (!t0) { t0 = performance.now(); timer = setInterval(() => { const e = document.getElementById('tm'); if (!e) return clearInterval(timer); e.textContent = Math.round((performance.now() - t0) / 1000); }, 250); }
+    const f = items[0];
+    if (b.dataset.c === f.c) {
+      mark(fKey(f.f), !missed.has(f.f)); items.shift(); $('#hint').textContent = '';
+      b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 300);
+      if (!items.length) return finish();
+      show();
+    } else {
+      misses++; missed.add(f.f); mark(fKey(f.f), false);
+      b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400);
+      $('#hint').innerHTML = `💡 Think: <b>${HOOKS[f.c].t}</b>`;
+      items.push(items.shift()); show();
+    }
+  });
+  function finish() {
+    clearInterval(timer); const secs = Math.round((performance.now() - t0) / 1000);
+    const best = S.best.sortTime; const nb = misses === 0 && (best == null || secs < best); if (nb) S.best.sortTime = secs; save();
+    const st = misses === 0 ? 3 : misses <= 2 ? 2 : 1; addStar(st); confetti();
+    app().innerHTML = header('Sort it') + `<div class="card center"><div style="font-size:60px">🗂️🎉</div><h2>Sorted all ${total} in ${secs} second${secs === 1 ? "" : "s"}!</h2><div class="starrow">${'⭐'.repeat(st)}${'☆'.repeat(3 - st)}</div><p>${misses === 0 ? (nb ? 'Perfect, and a new best time!' : 'Perfect! Best time: ' + best + ' sec.') : misses + ' to practice. A best time counts only with no misses.'}</p></div>
+    ${missed.size ? `<div class="card"><div class="ch">🔧 Practice these</div>${[...missed].map(n => { const f = MATCH_LIST.find(x => x.f === n); return `<div class="miss"><b>${featIcon(f)} ${f.f}</b> → ${PLACES[f.c].emoji} ${PLACES[f.c].name}<div class="tiny">💡 ${HOOKS[f.c].t}</div></div>`; }).join('')}</div>` : ''}
+    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="tricks">Memory tricks 🧠</button><button class="wide" data-go="home">Home 🏠</button>`;
+    bindGo(app()); $('#again').onclick = sortGame;
+  }
 }
 </script>
 </body>
