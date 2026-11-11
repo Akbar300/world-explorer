@@ -100,7 +100,8 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .packgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
 .pk{border:2px solid var(--line);background:#fff;border-radius:14px;padding:8px 4px;font-weight:700;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:2px}
 .pk span{font-size:34px}.pk.right{background:#E7F6EC;border-color:var(--good)}.pk.wrongb{background:#FDECEC;border-color:var(--bad);opacity:.6}
-.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px auto;max-width:420px}
+.uses,.tcount{max-width:520px;margin-left:auto;margin-right:auto}
 .tile{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;animation:popin .4s both}
 .tile.sea{background:#BFE3FA;border:2px solid #4FA8E0}.tile.landt{background:#CDEBB8;border:2px solid #6DAA45}
 @keyframes popin{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
@@ -181,6 +182,38 @@ body{display:flex;align-items:flex-start}
 .home .sr .wide{display:none}
 .split .zoom svg{max-height:calc(100vh - 260px);width:auto;max-width:100%;margin:0 auto}
 .globebox svg{max-height:calc(100vh - 200px)!important}
+}
+
+.btabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.btab{flex:none;display:flex;align-items:center;gap:6px;border:2px solid var(--line);background:#fff;border-radius:20px;padding:7px 12px;font-weight:800;font-size:14px;color:var(--navy)}
+.btab span{font-size:18px}.btab.on{background:#E3F0FF;border-color:var(--blue);color:var(--blue)}
+.bcard{display:none;margin-top:4px}.bcard.on{display:block}
+.bnav{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bnav .wide{margin:8px 0}
+.ancbox{margin-top:12px;border-top:2px dashed var(--line);padding-top:10px}
+.below{display:block}
+@media (min-width:960px){
+.phoneonly{display:none}
+.split.home{display:block}.home .sr{display:none}
+.bigmap{display:flex;justify-content:center}
+.bigmap .wmap{width:min(100%, calc((100vh - 250px) * 1.97));height:auto}
+.homemap .wmap{width:min(100%, calc((100vh - 240px) * 1.97))}
+.qmap .wmap{width:min(100%, calc((100vh - 330px) * 1.97))}
+.qwide .opts{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:1000px;margin-left:auto;margin-right:auto}
+.qwide .opts.two{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:600px}
+.qwide .fb,.qwide .spell,.qwide .err,.qwide .hintb{max-width:1000px;margin-left:auto;margin-right:auto}
+.qwide .q{text-align:center}
+.below{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}.below .info{margin-top:0}.below .toggles{max-width:330px}
+.gsplit{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}
+.gsplit .globebox svg{width:min(100%, calc(100vh - 250px));max-width:none!important;max-height:none!important}
+.gsplit .sl .wide{margin-top:8px}
+.gchal svg{width:min(100%, calc(100vh - 300px));max-width:none!important;max-height:none!important}
+.gchal{display:flex;justify-content:center}
+#fb:empty{display:none}
+.bpanes .bcard{max-width:1000px;margin-left:auto;margin-right:auto}
+.btabs{justify-content:center}
+.bnav{max-width:1000px;margin:0 auto}
+.bpanes .scenebox svg,.bpanes .mapbox svg{max-height:calc(100vh - 380px);width:auto;max-width:100%;margin:0 auto;display:block}
+.ancbox .mapbox svg{max-height:340px;width:auto;max-width:100%;margin:0 auto;display:block}
 }
 </style>
 </head>
@@ -400,8 +433,8 @@ function home() {
   app().innerHTML = header('World Explorer', false) + `
   <div class="hero"><div class="pals">🐻‍❄️🐢🐧</div><h1>Hi explorer! Ready to explore the world?</h1><p>Pip, Coco, and Mo are here to help you get ready for Friday's test.</p></div>
   <div class="split home"><div class="sl">${missBtn()}
-  <div class="mapbox">${mapSVG({ labels: true, fs: 24, uid: 'h' })}</div>
-  <p class="tiny">Tip: turn the phone sideways for a bigger map.</p></div><div class="sr">
+  <div class="mapbox bigmap homemap">${mapSVG({ labels: true, fs: 24, uid: 'h' })}</div>
+  <p class="tiny phoneonly">Tip: turn the phone sideways for a bigger map.</p></div><div class="sr">
   <div class="zones">${zones.map(z => `<button class="zone" data-go="${z.v}" style="--zc:${z.c}"><span class="ze">${z.e}</span><span class="zt">${z.t}</span><span class="zs">${z.s}</span>${best(z.v)}</button>`).join('')}</div>
   <button class="wide" data-go="progress">📊 My progress</button>
   <button class="wide" data-go="print">🖨️ Print center</button></div></div>`;
@@ -413,13 +446,13 @@ function explore() {
   const render = () => {
     app().innerHTML = header('Explore the map') + `
     <p class="lead">Tap a continent or an ocean to learn about it.</p>
-    <div class="split"><div class="sl"><div class="mapbox" id="mb">${mapSVG(Object.assign({ fs: 26, uid: 'x' }, opts))}</div></div><div class="sr">
-    <div class="toggles">
+    <div class="mapbox bigmap" id="mb">${mapSVG(Object.assign({ fs: 26, uid: 'x' }, opts))}</div>
+    <div class="below"><div class="toggles">
       <button class="tg ${opts.labels ? 'on' : ''}" data-t="labels">🏷️ Names</button>
       <button class="tg ${opts.eq ? 'on' : ''}" data-t="eq"><span style="color:#D62828">━</span> Equator</button>
       <button class="tg ${opts.pm ? 'on' : ''}" data-t="pm"><span style="color:#1D4ED8">┃</span> Prime meridian</button>
     </div>
-    <div id="info" class="info"><b>Remember:</b> 🐻‍❄️ the <b>Arctic</b> is at the very top where it's cold. 🐢 The <b>Atlantic</b> is in the middle, between the Americas and Europe/Africa.</div></div></div>`;
+    <div id="info" class="info"><b>Remember:</b> 🐻‍❄️ the <b>Arctic</b> is at the very top where it's cold. 🐢 The <b>Atlantic</b> is in the middle, between the Americas and Europe/Africa.</div></div>`;
     bindGo(app());
     app().querySelectorAll('.tg').forEach(b => b.onclick = () => { opts[b.dataset.t] = !opts[b.dataset.t]; render(); });
     const svg = $('#mb svg');
@@ -768,7 +801,7 @@ function runRound(cfg) {
     if (q.kind === 'mc') body += `<div class="opts ${q.options.length === 2 ? 'two' : ''}">${q.options.map(o => `<button class="opt" data-v="${esc(o.v)}">${o.t}</button>`).join('')}</div>`;
     if (q.kind === 'spell') body += `<div class="spell"><input id="sp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type the name"><button class="go" id="spGo">Check</button></div><div id="spErr" class="err"></div><button class="hintb" id="spHint">💡 Hint: first letters</button>`;
     const ctrl = body.slice(body.indexOf('</div>') + 6); const qtext = body.slice(0, body.indexOf('</div>') + 6);
-    app().innerHTML = header(cfg.title) + `<div class="${q.map ? '' : 'narrow'}">` + prog + qtext + (q.map ? `<div class="split qsplit"><div class="sl">${mapPart}</div><div class="sr">${ctrl}<div id="fb" class="fb"></div></div></div>` : ctrl + `<div id="fb" class="fb"></div>`) + '</div>';
+    app().innerHTML = header(cfg.title) + `<div class="${q.map ? 'qwide' : 'narrow'}">` + prog + qtext + (q.map ? mapPart.replace('class="mapbox"', 'class="mapbox bigmap qmap"') : '') + ctrl + `<div id="fb" class="fb"></div></div>`;
     bindGo(app());
     if (q.kind === 'mc') app().querySelectorAll('.opt').forEach(b => b.onclick = () => { const ok = b.dataset.v === q.answer; if (!ok && mode !== 'test') b.classList.add('wrongb'); result(q, ok, b.dataset.v); });
     if (q.kind === 'tap' || q.kind === 'hemi') {
@@ -932,7 +965,8 @@ function globe() {
   glState.t = 0; glState.seam = false; glState.hi = null; glState.spin = true; glState.busy = false;
   app().innerHTML = header('Spin the globe') + `
   <p class="lead">Drag to spin the Earth. Tap a place to learn about it.</p>
-  <div class="split"><div class="sl"><div class="mapbox globebox"><svg id="gsvg" class="tapme" viewBox="0 0 ${GW} ${GH}" role="img" aria-label="Spinning globe"></svg></div></div><div class="sr">
+  <div class="split gsplit"><div class="sl"><div class="mapbox globebox"><svg id="gsvg" class="tapme" viewBox="0 0 ${GW} ${GH}" role="img" aria-label="Spinning globe"></svg></div>
+  <button class="wide" id="gChal" style="border-color:#E0A100">🏆 Globe challenge: spin and find</button></div><div class="sr">
   <div class="toggles">
     <button class="tg on" id="gSpin">⏸ Stop spin</button>
     <button class="tg on" data-g="labels">🏷️ Names</button>
@@ -944,7 +978,7 @@ function globe() {
   <div class="card why"><div class="ch" style="border-color:#C62828">🤔 Why is the Pacific Ocean on both sides of my map?</div>
     <div id="whyText" class="whyt">A flat map is a globe that got <b>cut and peeled flat</b>, like peeling an orange. Let's watch!</div>
     <div class="whyb"><button class="wide go" id="whyGo">Step 1: Find the cut ▶</button></div></div>
-  <button class="wide" id="gChal" style="border-color:#E0A100">🏆 Globe challenge: spin and find</button></div></div>`;
+  </div></div>`;
   bindGo(app());
   glDraw(); glSyncSpin(); glSpinLoop();
   $('#gSpin').onclick = () => { if (glState.t > 0) return; glState.spin = !glState.spin; glSyncSpin(); };
@@ -993,7 +1027,7 @@ function globeChallenge() {
     const id = qs[i];
     app().innerHTML = header('Globe challenge') + `<div class="prog"><div style="width:${i / qs.length * 100}%"></div></div><div class="qn">Question ${i + 1} of ${qs.length}</div>
     <div class="q"><span class="qe">${PLACES[id].emoji}</span>Spin the globe and tap the <b>${PLACES[id].name}</b></div>
-    <div class="split"><div class="sl"><div class="mapbox globebox"><svg id="gsvg" class="tapme" viewBox="0 0 ${GW} ${GH}" role="img" aria-label="Globe"></svg></div></div><div class="sr"><div id="fb" class="fb"></div></div></div>`;
+    <div class="mapbox globebox gchal"><svg id="gsvg" class="tapme" viewBox="0 0 ${GW} ${GH}" role="img" aria-label="Globe"></svg></div><div id="fb" class="fb"></div>`;
     bindGo(app()); glDraw(); glSpinLoop();
     glBindDrag(e => {
       if ($('#nx')) return; const got = glWhat(e); if (!got) return;
@@ -1058,16 +1092,16 @@ function lifelab(sel) {
   <div class="card"><div class="ch">🔍 Visit a place</div>
     <div class="chips">${Object.keys(SCENES).map(x => `<button class="chip ${x === k ? 'on' : ''}" style="--cc:#9fd3a9" data-go="lifelab" data-arg="${x}">${SCENES[x].e} ${SCENES[x].name}</button>`).join('')}</div>
     <div class="split"><div class="sl"><div class="scenebox">${sceneSVG(k, 220)}</div></div><div class="sr">
-    <div class="fcs"><div class="fcr"><span>${sc.fi}</span><div><b>Food</b><br>${sc.food}</div></div><div class="fcr"><span>${sc.ci}</span><div><b>Clothing</b><br>${sc.cloth}</div></div><div class="fcr"><span>${sc.si}</span><div><b>Shelter</b><br>${sc.shelter}</div></div></div></div></div></div>
-  <button class="wide go big" id="packGo">🎒 Play: Pack for the trip!</button>
-  <div class="card"><div class="ch">🏺 Ancient people lived by rivers</div>
+    <div class="fcs"><div class="fcr"><span>${sc.fi}</span><div><b>Food</b><br>${sc.food}</div></div><div class="fcr"><span>${sc.ci}</span><div><b>Clothing</b><br>${sc.cloth}</div></div><div class="fcr"><span>${sc.si}</span><div><b>Shelter</b><br>${sc.shelter}</div></div></div></div></div>
+    ${k === 'river' ? `<div class="ancbox"><div class="ht">🏺 Ancient people lived by rivers too!</div>
     <p>Rivers gave water to drink, fish to eat, and rich soil for farming. Tap a pin!</p>
-    <div class="split"><div class="sl"><div class="mapbox" id="anc">${mapSVG({ uid: 'an', markers: ancientPins() })}</div></div><div class="sr"><div id="ancInfo" class="info">Tap a pin to visit an ancient civilization.</div></div></div></div>
+    <div class="mapbox" id="anc">${mapSVG({ uid: 'an', markers: ancientPins() })}</div><div id="ancInfo" class="info">Tap a pin to visit an ancient civilization.</div></div>` : `<p class="tiny">🏺 Tip: tap <b>Next to a river</b> to see where ancient people lived.</p>`}</div>
+  <button class="wide go big" id="packGo">🎒 Play: Pack for the trip!</button>
   <button class="wide go" id="startL">Start Life lab quiz ▶</button>`;
   bindGo(app());
   $('#startL').onclick = () => runRound({ title: 'Life lab', qs: shuffle(LIFE).slice(0, 8).map(f => f()), key: 'lifelab', mode: 'practice', again: () => lifelab(k) });
   $('#packGo').onclick = packGame;
-  $('#anc svg').setAttribute('viewBox', '440 50 470 250');
+  if ($('#anc')) $('#anc svg').setAttribute('viewBox', '440 50 470 250');
   app().querySelectorAll('[data-anc]').forEach(g => g.addEventListener('click', () => {
     const a = ANCIENT[+g.dataset.anc];
     app().querySelectorAll('[data-anc] circle:first-of-type').forEach(c => c.setAttribute('r', 16));
@@ -1139,41 +1173,46 @@ const CLIMATE = [
   { ll: [12, 49], e: '🌦️', t: '<b>Mild and rainy.</b> Much of Europe has cool weather with some rain all year.' }
 ];
 const CLIM_KEY = [['🧊', 'freezing'], ['❄️', 'cold and icy'], ['🏔️', 'snowy mountains'], ['🏜️', 'hot and dry'], ['🌧️', 'hot and rainy'], ['🍂', 'four seasons'], ['🌦️', 'mild and rainy']];
+const BTABS = [['🌊', 'Oceans'], ['👨‍👩‍👧', 'People'], ['🏆', 'Biggest and smallest'], ['🌡️', 'Climate'], ['🏞️', 'Near water'], ['⛰️', 'Mountains']];
 function bonus() {
   const tiles = Array.from({ length: 10 }, (_, i) => `<div class="tile ${i < 7 ? 'sea' : 'landt'}" style="animation-delay:${i * 0.12}s">${i < 7 ? '🌊' : '🌳'}</div>`).join('');
   const bars = PEOPLE.map(([k, n, lbl]) => `<div class="pbar"><div class="pn">${PLACES[k].emoji} ${PLACES[k].name}</div><div class="pr">${n === 0 ? '<span class="pz">🚫 no towns</span>' : '<span class="pi">' + (n < 0.25 ? '<span class="tinyp">🧍</span>' : '🧍'.repeat(Math.max(1, Math.round(n)))) + '</span>'}</div><div class="pl">${lbl}</div></div>`).join('');
   const climMarks = CLIMATE.map((c, i) => { const [x, y] = proj(c.ll); return `<g data-cl="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="35" fill="#fff" stroke="#0B2545" stroke-width="3"/><text x="${x}" y="${y + 2}" font-size="42" text-anchor="middle" dominant-baseline="central">${c.e}</text></g>`; }).join('');
   app().innerHTML = header('Bonus facts') + `
-  <p class="lead">⭐ Extra facts for super explorers. Tap and play to discover them!</p>
-  <div class="cgrid">
-  <div class="card"><div class="ch">🌊 Oceans cover most of Earth</div>
-    <p>If Earth's surface were cut into <b>10 pieces</b>, about <b>7 would be ocean</b>!</p>
+  <div class="btabs">${BTABS.map((b, i) => `<button class="btab ${i === 0 ? 'on' : ''}" data-bt="${i}"><span>${b[0]}</span>${b[1]}</button>`).join('')}</div>
+  <div class="bpanes">
+  <div class="card bcard on"><div class="ch">🌊 Oceans cover most of Earth</div>
+    <p>Earth is mostly water! There is <b>more than twice as much ocean as land</b>. Count the squares: <b>7 blue ocean</b> squares and only <b>3 green land</b> squares.</p>
     <div class="tiles" id="tiles">${tiles}</div><div class="tcount"><span class="sea">🌊 7 ocean</span><span class="landt">🌳 3 land</span></div>
     <div class="uses"><div><span>🐟</span>Food</div><div><span>🚢</span>Travel and trade</div><div><span>🐋</span>Home for sea animals</div></div>
     <button class="hintb" id="replayT">↻ Watch again</button></div>
-  <div class="card"><div class="ch">👨‍👩‍👧 Which continents have the most people?</div>
+  <div class="card bcard"><div class="ch">👨‍👩‍👧 Which continents have the most people?</div>
     <p class="tiny">Each 🧍 = about 500 million people</p>${bars}
     <p><b>Asia</b> has the most people. <b>Antarctica</b> has no countries and no towns, only visiting scientists. <b>Australia</b> is a continent AND a country.</p></div>
-  <div class="card"><div class="ch">🏆 Biggest and smallest</div>
+  <div class="card bcard"><div class="ch">🏆 Biggest and smallest</div>
     <div class="sup">${[['🐼', 'Biggest continent', 'Asia'], ['🦘', 'Smallest continent', 'Australia'], ['🐳', 'Biggest ocean', 'Pacific'], ['🐻‍❄️', 'Smallest ocean', 'Arctic'], ['🧊', 'Coldest continent', 'Antarctica'], ['👨‍👩‍👧', 'Most people', 'Asia']].map(x => `<div><span>${x[0]}</span><small>${x[1]}</small><b>${x[2]}</b></div>`).join('')}</div></div>
-  <div class="card"><div class="ch">🌡️ Every continent has its own climate</div>
+  <div class="card bcard"><div class="ch">🌡️ Every continent has its own climate</div>
     <p>Tap a sticker on the map!</p>
     <div class="mapbox" id="clim">${mapSVG({ uid: 'cl', markers: climMarks })}</div>
     <div class="ckey">${CLIM_KEY.map(c => `<span>${c[0]} ${c[1]}</span>`).join('')}</div>
     <div id="climInfo" class="info">Climate is the usual weather in a place. It changes how people and animals live.</div></div>
-  <div class="card"><div class="ch">🏞️ Why do people live near water?</div>
+  <div class="card bcard"><div class="ch">🏞️ Why do people live near water?</div>
     <p>Find the <b>4 reasons</b> hiding in the picture. Tap them!</p>
     <div class="scenebox" id="vil">${villageSVG()}</div>
     <div class="found" id="found">Found 0 of 4</div><div id="vilList" class="vlist"></div></div>
-  <div class="card"><div class="ch">⛰️ Mountains keep people apart</div>
+  <div class="card bcard"><div class="ch">⛰️ Mountains keep people apart</div>
     <div class="scenebox" id="mtn">${mountainSVG()}</div>
     <button class="wide" id="cross">🚶 Try to cross the mountains</button>
     <div id="mtnInfo" class="info">Can the people of Red Village visit Blue Village?</div></div>
   </div>
-  <button class="wide go big" id="startB">Start the bonus quiz ▶</button>`;
+  <div class="bnav"><button class="wide" id="bNext">Next fact ▶</button><button class="wide go" id="startB">Bonus quiz ⭐</button></div>`;
   bindGo(app());
   $('#startB').onclick = () => runRound({ title: 'Bonus facts', qs: shuffle(BONUSQ).slice(0, 8).map(f => f()), key: 'bonus', mode: 'practice', again: bonus });
   $('#replayT').onclick = () => { const t = $('#tiles'); t.innerHTML = tiles; };
+  let bt = 0; const cards = [...app().querySelectorAll('.bcard')], tabs = [...app().querySelectorAll('.btab')];
+  const showTab = n => { bt = n; cards.forEach((c, i) => c.classList.toggle('on', i === n)); tabs.forEach((t, i) => t.classList.toggle('on', i === n)); if (n === 0) $('#tiles').innerHTML = tiles; $('#bNext').textContent = n === cards.length - 1 ? 'Back to the first fact ↺' : 'Next fact ▶'; tabs[n].scrollIntoView({ block: 'nearest', inline: 'center' }); };
+  tabs.forEach((t, i) => t.onclick = () => showTab(i));
+  $('#bNext').onclick = () => showTab((bt + 1) % cards.length);
   app().querySelectorAll('[data-cl]').forEach(g => g.addEventListener('click', () => {
     const c = CLIMATE[+g.dataset.cl]; app().querySelectorAll('[data-cl] circle').forEach(x => { x.setAttribute('r', 35); x.setAttribute('fill', '#fff'); });
     g.querySelector('circle').setAttribute('r', 42); g.querySelector('circle').setAttribute('fill', '#FFE08A');
