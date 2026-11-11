@@ -89,6 +89,29 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .conf span{position:absolute;top:-30px;font-size:26px;animation:fall 1.3s ease-in forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(260deg)}}
 .filelink{margin:10px 0}
+.scene{width:100%;height:auto;display:block;border-radius:12px;margin:0 auto}
+.scenebox{margin:8px 0;border-radius:14px;overflow:hidden;border:2px solid var(--line)}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;font-weight:800;color:var(--navy)}
+.trio div{background:#F4F9F2;border-radius:12px;padding:8px}.trio span{display:block;font-size:34px}
+.center{text-align:center}
+.fcs{display:grid;gap:6px}.fcr{display:flex;gap:10px;align-items:center;background:#F7FAFD;border-radius:12px;padding:8px 10px;font-size:15px}.fcr span{font-size:28px}
+.big{font-size:20px;padding:16px}
+.packgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.pk{border:2px solid var(--line);background:#fff;border-radius:14px;padding:8px 4px;font-weight:700;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pk span{font-size:34px}.pk.right{background:#E7F6EC;border-color:var(--good)}.pk.wrongb{background:#FDECEC;border-color:var(--bad);opacity:.6}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}
+.tile{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;animation:popin .4s both}
+.tile.sea{background:#BFE3FA;border:2px solid #4FA8E0}.tile.landt{background:#CDEBB8;border:2px solid #6DAA45}
+@keyframes popin{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.tcount{display:flex;gap:12px;justify-content:center;font-weight:800}
+.uses{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;font-size:13px;font-weight:700;margin-top:8px}.uses div{background:#EEF6FD;border-radius:10px;padding:6px}.uses span{display:block;font-size:28px}
+.pbar{display:grid;grid-template-columns:118px 1fr;gap:2px 8px;align-items:center;padding:4px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.pn{font-weight:800}.pr{font-size:17px;letter-spacing:-4px;white-space:nowrap;overflow:hidden}
+.tinyp{font-size:9px;letter-spacing:0}.pl{grid-column:2;font-size:12px;color:#4a5a73}
+.half{display:inline-block;overflow:hidden;vertical-align:bottom}.pz{font-size:13px;letter-spacing:0;color:#4a5a73;font-weight:700}
+.found{font-weight:800;text-align:center;color:var(--navy)}
+.vlist{display:grid;gap:6px;margin-top:6px}.vi{display:flex;gap:8px;align-items:center;background:#E7F6EC;border-radius:10px;padding:6px 10px;font-size:15px;animation:popin .3s}.vi span{font-size:26px}
+
 .globebox svg{display:block;width:100%;max-width:520px;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .whyt{margin:4px 0 6px}.why .ch{border-left-color:#C62828}
 @media (prefers-reduced-motion:reduce){.pulse,.conf span,.stars.pop{animation:none}}
@@ -849,6 +872,199 @@ function globeChallenge() {
     bindGo(app()); $('#again').onclick = globeChallenge;
   };
   show();
+}
+</script>
+<script>const em = (x, y, s, e, extra = '') => `<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central" ${extra}>${e}</text>`;
+const PEOPLE_NOTE = 1;
+const SCENES = {
+  cold: { to: 'an icy cold place', name: 'Icy cold place', e: '🥶', food: 'fish and seal meat; foods that keep you warm', cloth: 'thick coats, hats, boots, and mittens', shelter: 'strong, warm homes; long ago some people built igloos out of snow' },
+  desert: { to: 'a hot, dry desert', name: 'Hot, dry desert', e: '🏜️', food: 'dates and foods that need little water', cloth: 'light, loose clothes and head covers for shade', shelter: 'thick walls that stay cool inside' },
+  island: { to: 'an island', name: 'Island', e: '🏝️', food: 'fish, seafood, and coconuts', cloth: 'light clothes for warm, sunny days', shelter: 'homes near the beach; boats to get around' },
+  rain: { to: 'a rain forest', name: 'Rain forest', e: '🌴', food: 'fruits like bananas, plus many plants', cloth: 'light clothes that dry fast', shelter: 'homes on stilts to stay above the water and mud' },
+  mountain: { to: 'the mountains', name: 'Mountains', e: '🏔️', food: 'goats, sheep, and crops grown on steps up the slopes', cloth: 'warm layers, because it gets colder up high', shelter: 'strong homes built on the hillsides' },
+  river: { to: 'a village next to a river', name: 'Next to a river', e: '🏞️', food: 'fish, plus crops grown in rich river soil', cloth: 'clothes that fit the weather', shelter: 'homes near the water; boats to travel and trade' }
+};
+function sceneSVG(k, h = 190) {
+  const W = 360, H = 200;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="scene" role="img" aria-label="${SCENES[k].name}" style="max-height:${h}px">`;
+  if (k === 'cold') s += `<rect width="360" height="200" fill="#DCEFFF"/><circle cx="300" cy="40" r="22" fill="#FFF3B0"/><path d="M0 140 Q90 110 180 135 T360 128 V200 H0Z" fill="#FFFFFF" stroke="#B9D8F0"/><path d="M200 145 a40 32 0 0 1 80 0 Z" fill="#F4FAFF" stroke="#9cc3e0" stroke-width="2"/><path d="M215 145 v-12 a12 12 0 0 1 24 0 v12" fill="#9cc3e0"/>` + em(90, 130, 44, '🐻‍❄️') + em(320, 150, 30, '🐧') + em(40, 40, 20, '❄️') + em(150, 30, 16, '❄️') + em(230, 70, 18, '❄️');
+  if (k === 'desert') s += `<rect width="360" height="200" fill="#FFE9B8"/><circle cx="290" cy="45" r="30" fill="#FFB703"/><path d="M0 150 Q80 100 170 140 T360 120 V200 H0Z" fill="#E9B872"/><path d="M0 175 Q120 140 240 170 T360 165 V200 H0Z" fill="#D49A55"/>` + em(110, 125, 48, '🐪') + em(250, 120, 40, '🌵') + em(40, 140, 28, '🌵');
+  if (k === 'island') s += `<rect width="360" height="200" fill="#CFEBFF"/><circle cx="60" cy="40" r="22" fill="#FFD447"/><rect y="110" width="360" height="90" fill="#4FA8E0"/><ellipse cx="190" cy="125" rx="95" ry="22" fill="#F2D49B"/>` + em(185, 82, 64, '🌴') + em(310, 120, 36, '⛵') + em(60, 160, 26, '🐟') + em(250, 170, 22, '🐠');
+  if (k === 'rain') s += `<rect width="360" height="200" fill="#BFE3C0"/><path d="M0 70 Q60 40 120 70 T240 65 T360 70 V200 H0Z" fill="#5DAE5B"/><path d="M0 120 Q80 95 160 120 T360 115 V200 H0Z" fill="#3E8E41"/><rect y="168" width="360" height="32" fill="#7A9E6A"/><rect x="150" y="96" width="76" height="40" fill="#C98B4E" stroke="#7A5230" stroke-width="2"/><path d="M142 98 L188 70 L234 98Z" fill="#8B5A2B"/><rect x="156" y="136" width="5" height="40" fill="#7A5230"/><rect x="215" y="136" width="5" height="40" fill="#7A5230"/>` + em(60, 70, 36, '🦜') + em(300, 110, 46, '🌴') + em(80, 140, 34, '🍌') + `<g stroke="#5AA7E0" stroke-width="2.5" stroke-linecap="round">${[[30, 20], [100, 10], [200, 25], [280, 15], [330, 40], [250, 50]].map(([x, y]) => `<line x1="${x}" y1="${y}" x2="${x - 5}" y2="${y + 14}"/>`).join('')}</g>`;
+  if (k === 'mountain') s += `<rect width="360" height="200" fill="#D6ECFF"/><path d="M0 200 L90 60 L180 200Z" fill="#8A8F98"/><path d="M90 60 L72 88 L108 88Z" fill="#fff"/><path d="M120 200 L230 35 L340 200Z" fill="#6E747E"/><path d="M230 35 L208 68 L252 68Z" fill="#fff"/><rect y="175" width="360" height="25" fill="#7FB069"/>` + em(300, 160, 30, '🐐') + em(50, 170, 26, '🏡') + em(160, 150, 22, '🧣');
+  if (k === 'river') s += `<rect width="360" height="200" fill="#D6F0FF"/><rect y="70" width="360" height="130" fill="#8BC86A"/><path d="M0 120 C80 90 140 160 220 130 S330 100 360 115 V150 C330 135 260 175 210 160 S90 125 0 155Z" fill="#3D8FD8"/><g fill="#E8C35A">${[0, 1, 2, 3].map(i => `<rect x="${240 + i * 26}" y="165" width="20" height="24" rx="3"/>`).join('')}</g>` + em(130, 140, 26, '🐟') + em(250, 128, 32, '🛶') + em(60, 88, 30, '🏡') + em(300, 90, 26, '🌾');
+  return s + '</svg>';
+}
+
+function lifelab(sel) {
+  const k = sel || 'cold';
+  const sc = SCENES[k];
+  app().innerHTML = header('Life lab') + `
+  <div class="card"><div class="ch">🌍 Where you live changes how you live</div>
+    <div class="trio"><div><span>🍎</span>Food</div><div><span>👕</span>Clothing</div><div><span>🏠</span>Shelter</div></div>
+    <p class="center">All three can be different because of the <b>climate</b>, <b>land</b>, and <b>water</b> around you.</p></div>
+  <div class="card"><div class="ch">🔍 Visit a place</div>
+    <div class="chips">${Object.keys(SCENES).map(x => `<button class="chip ${x === k ? 'on' : ''}" style="--cc:#9fd3a9" data-go="lifelab" data-arg="${x}">${SCENES[x].e} ${SCENES[x].name}</button>`).join('')}</div>
+    <div class="scenebox">${sceneSVG(k, 220)}</div>
+    <div class="fcs"><div class="fcr"><span>🍎</span><div><b>Food</b><br>${sc.food}</div></div><div class="fcr"><span>👕</span><div><b>Clothing</b><br>${sc.cloth}</div></div><div class="fcr"><span>🏠</span><div><b>Shelter</b><br>${sc.shelter}</div></div></div></div>
+  <button class="wide go big" id="packGo">🎒 Play: Pack for the trip!</button>
+  <div class="card"><div class="ch">🏺 Ancient people lived by rivers</div>
+    <p>Rivers gave water to drink, fish to eat, and rich soil for farming. Tap a pin!</p>
+    <div class="mapbox" id="anc">${mapSVG({ uid: 'an', markers: ancientPins() })}</div>
+    <div id="ancInfo" class="info">Tap a pin to visit an ancient civilization.</div></div>
+  <button class="wide go" id="startL">Start Life lab quiz ▶</button>`;
+  bindGo(app());
+  $('#startL').onclick = () => runRound({ title: 'Life lab', qs: shuffle(LIFE).slice(0, 8).map(f => f()), key: 'lifelab', mode: 'practice', again: () => lifelab(k) });
+  $('#packGo').onclick = packGame;
+  $('#anc svg').setAttribute('viewBox', '440 50 470 250');
+  app().querySelectorAll('[data-anc]').forEach(g => g.addEventListener('click', () => {
+    const a = ANCIENT[+g.dataset.anc];
+    app().querySelectorAll('[data-anc] circle:first-of-type').forEach(c => c.setAttribute('r', 16));
+    g.querySelector('circle').setAttribute('r', 21);
+    $('#ancInfo').innerHTML = `<div class="ibig">${a.e} ${a.n}</div><div>Grew up along the <b>${a.r}</b> in <b>${a.c}</b>. ${a.f}</div>`;
+  }));
+}
+const ANCIENT = [
+  { n: 'Ancient Egypt', e: '🔺', r: 'Nile River', c: 'Africa', ll: [31.5, 26], f: 'Every year the Nile flooded and left rich mud that was great for farming.' },
+  { n: 'Ancient China', e: '🐉', r: 'Huang He River', c: 'Asia', ll: [111, 36], f: 'The Huang He is also called the Yellow River because of its yellow mud.' },
+  { n: 'Ancient Rome', e: '🏛️', r: 'Tiber River', c: 'Europe', ll: [12.5, 42], f: 'Rome was built on hills next to the Tiber River.' }
+];
+function ancientPins() {
+  return ANCIENT.map((a, i) => { const [x, y] = proj(a.ll); const lx = i === 2 ? x - 38 : x + 42, ly = y - 38;
+    return `<g data-anc="${i}" style="cursor:pointer"><line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="#0B2545" stroke-width="1.5"/><circle cx="${lx}" cy="${ly}" r="16" fill="#FFD447" stroke="#0B2545" stroke-width="2.5"/><text x="${lx}" y="${ly + 1}" font-size="17" text-anchor="middle" dominant-baseline="central">${a.e}</text><circle cx="${x}" cy="${y}" r="4.5" fill="#C62828" stroke="#fff" stroke-width="1.5"/></g>`; }).join('');
+}
+
+const PACK = [
+  { k: 'cold', ok: [['🧥', 'thick coat'], ['🧤', 'mittens']], no: [['🩳', 'shorts'], ['👙', 'swimsuit'], ['🩴', 'flip-flops'], ['🐪', 'camel']] },
+  { k: 'desert', ok: [['👒', 'sun hat'], ['💧', 'lots of water']], no: [['🧥', 'snow coat'], ['🧤', 'mittens'], ['⛸️', 'ice skates'], ['🛷', 'sled']] },
+  { k: 'island', ok: [['⛵', 'boat'], ['🎣', 'fishing rod']], no: [['🐪', 'camel'], ['🛷', 'sled'], ['⛷️', 'skis'], ['🧤', 'mittens']] },
+  { k: 'rain', ok: [['☂️', 'umbrella'], ['🥾', 'rain boots']], no: [['🛷', 'sled'], ['🧤', 'mittens'], ['🐪', 'camel'], ['⛸️', 'ice skates']] },
+  { k: 'mountain', ok: [['🧣', 'warm layers'], ['🥾', 'hiking boots']], no: [['👙', 'swimsuit'], ['🛶', 'canoe'], ['🐪', 'camel'], ['🩴', 'flip-flops']] },
+  { k: 'river', ok: [['🛶', 'canoe'], ['🎣', 'fishing rod']], no: [['🛷', 'sled'], ['🐪', 'camel'], ['⛷️', 'skis'], ['🧤', 'mittens']] }
+];
+function packGame() {
+  const rounds = shuffle(PACK); let i = 0, score = 0;
+  const show = () => {
+    const r = rounds[i]; const items = shuffle(r.ok.map(x => [...x, 1]).concat(r.no.map(x => [...x, 0])));
+    let picked = new Set(), wrong = 0;
+    app().innerHTML = header('Pack for the trip') + `<div class="prog"><div style="width:${i / rounds.length * 100}%"></div></div><div class="qn">Trip ${i + 1} of ${rounds.length}</div>
+    <div class="q">🎒 You're going to <b>${SCENES[r.k].to}</b>! Pick the <b>2 things</b> you need.</div>
+    <div class="scenebox">${sceneSVG(r.k, 200)}</div>
+    <div class="packgrid">${items.map((it, j) => `<button class="pk" data-j="${j}"><span>${it[0]}</span>${it[1]}</button>`).join('')}</div>
+    <div id="fb" class="fb"></div>`;
+    bindGo(app());
+    app().querySelectorAll('.pk').forEach(b => b.onclick = () => {
+      if (picked.size >= 2) return;
+      const it = items[+b.dataset.j];
+      if (it[2]) { picked.add(+b.dataset.j); b.classList.add('right'); b.disabled = true; }
+      else { wrong++; b.classList.add('wrongb'); b.disabled = true; $('#fb').className = 'fb bad'; $('#fb').innerHTML = `Hmm, a ${it[1]} won't help much in ${SCENES[r.k].to}. Try again!`; }
+      if (picked.size === 2) {
+        if (wrong === 0) { score++; addStar(); }
+        confetti();
+        $('#fb').className = 'fb good';
+        $('#fb').innerHTML = `<b>${pick(CHEERS)}</b> Packed and ready! ${SCENES[r.k].e} People there wear <b>${SCENES[r.k].cloth}</b>.<button class="wide go" id="nx">Next trip ▶</button>`;
+        $('#nx').onclick = () => { i++; if (i >= rounds.length) done(); else show(); };
+      }
+    });
+  };
+  const done = () => {
+    const best = S.best.pack; if (best == null || score > best) S.best.pack = score; save();
+    app().innerHTML = header('Pack for the trip') + `<div class="card center"><div style="font-size:60px">🎒🌍</div><h2>${score} / ${rounds.length} perfect packs</h2><p>${score >= 5 ? 'Super traveler!' : 'Nice packing! Try again for a perfect score.'}</p></div>
+    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="lifelab">Back to Life lab</button>`;
+    bindGo(app()); $('#again').onclick = packGame;
+  };
+  show();
+}
+
+const PEOPLE = [['asia', 9.6, 'about 4.8 billion'], ['africa', 3, 'about 1.5 billion'], ['europe', 1.5, 'about 750 million'], ['namerica', 1.2, 'about 600 million'], ['samerica', 0.9, 'about 440 million'], ['australia', 0.06, 'about 27 million'], ['antarctica', 0, 'no one lives there']];
+const CLIMATE = [
+  { ll: [40, -71], e: '🧊', t: 'Antarctica is the coldest place on Earth. It is covered in thick ice.' },
+  { ll: [10, 23], e: '🏜️', t: 'The Sahara in Africa is a huge, hot desert.' },
+  { ll: [22, -1], e: '🌴', t: 'Africa also has rain forests near the equator, where it is hot and rainy.' },
+  { ll: [-62, -5], e: '🌴', t: 'The Amazon rain forest in South America is the biggest rain forest in the world.' },
+  { ll: [-42, 74], e: '❄️', t: 'Up north near the Arctic Ocean, it is cold and icy most of the year.' },
+  { ll: [86, 30], e: '🏔️', t: 'The Himalayas in Asia are so high that snow stays on top all year.' },
+  { ll: [132, -24], e: '🏜️', t: 'Much of Australia is hot, dry desert called the Outback.' },
+  { ll: [-95, 40], e: '🌻', t: 'Much of North America has warm summers and cold, snowy winters.' }
+];
+function bonus() {
+  const tiles = Array.from({ length: 10 }, (_, i) => `<div class="tile ${i < 7 ? 'sea' : 'landt'}" style="animation-delay:${i * 0.12}s">${i < 7 ? '🌊' : '🌳'}</div>`).join('');
+  const bars = PEOPLE.map(([k, n, lbl]) => `<div class="pbar"><div class="pn">${PLACES[k].emoji} ${PLACES[k].name}</div><div class="pr">${n === 0 ? '<span class="pz">🚫 no towns</span>' : '<span class="pi">' + (n < 0.25 ? '<span class="tinyp">🧍</span>' : '🧍'.repeat(Math.max(1, Math.round(n)))) + '</span>'}</div><div class="pl">${lbl}</div></div>`).join('');
+  const climMarks = CLIMATE.map((c, i) => { const [x, y] = proj(c.ll); return `<g data-cl="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="30" fill="#fff" stroke="#0B2545" stroke-width="3"/><text x="${x}" y="${y + 2}" font-size="34" text-anchor="middle" dominant-baseline="central">${c.e}</text></g>`; }).join('');
+  app().innerHTML = header('Bonus facts') + `
+  <p class="lead">⭐ Extra facts for super explorers. Tap and play to discover them!</p>
+  <div class="card"><div class="ch">🌊 Oceans cover most of Earth</div>
+    <p>If Earth's surface were cut into <b>10 pieces</b>, about <b>7 would be ocean</b>!</p>
+    <div class="tiles" id="tiles">${tiles}</div><div class="tcount"><span class="sea">🌊 7 ocean</span><span class="landt">🌳 3 land</span></div>
+    <div class="uses"><div><span>🐟</span>Food</div><div><span>🚢</span>Travel and trade</div><div><span>🐋</span>Home for sea animals</div></div>
+    <button class="hintb" id="replayT">↻ Watch again</button></div>
+  <div class="card"><div class="ch">👨‍👩‍👧 Which continents have the most people?</div>
+    <p class="tiny">Each 🧍 = about 500 million people</p>${bars}
+    <p><b>Asia</b> has the most people. <b>Antarctica</b> has no countries and no towns, only visiting scientists. <b>Australia</b> is a continent AND a country.</p></div>
+  <div class="card"><div class="ch">🌡️ Every continent has its own climate</div>
+    <p>Tap a sticker on the map!</p>
+    <div class="mapbox" id="clim">${mapSVG({ uid: 'cl', markers: climMarks })}</div>
+    <div id="climInfo" class="info">Climate is the usual weather in a place. It changes how people and animals live.</div></div>
+  <div class="card"><div class="ch">🏞️ Why do people live near water?</div>
+    <p>Find the <b>4 reasons</b> hiding in the picture. Tap them!</p>
+    <div class="scenebox" id="vil">${villageSVG()}</div>
+    <div class="found" id="found">Found 0 of 4</div><div id="vilList" class="vlist"></div></div>
+  <div class="card"><div class="ch">⛰️ Mountains keep people apart</div>
+    <div class="scenebox" id="mtn">${mountainSVG()}</div>
+    <button class="wide" id="cross">🚶 Try to cross the mountains</button>
+    <div id="mtnInfo" class="info">Can the people of Red Village visit Blue Village?</div></div>
+  <button class="wide go big" id="startB">Start the bonus quiz ▶</button>`;
+  bindGo(app());
+  $('#startB').onclick = () => runRound({ title: 'Bonus facts', qs: shuffle(BONUSQ).slice(0, 8).map(f => f()), key: 'bonus', mode: 'practice', again: bonus });
+  $('#replayT').onclick = () => { const t = $('#tiles'); t.innerHTML = tiles; };
+  app().querySelectorAll('[data-cl]').forEach(g => g.addEventListener('click', () => {
+    const c = CLIMATE[+g.dataset.cl]; app().querySelectorAll('[data-cl] circle').forEach(x => { x.setAttribute('r', 30); x.setAttribute('fill', '#fff'); });
+    g.querySelector('circle').setAttribute('r', 36); g.querySelector('circle').setAttribute('fill', '#FFE08A');
+    $('#climInfo').innerHTML = `<div class="ibig">${c.e}</div>${c.t}`;
+  }));
+  const found = new Set();
+  app().querySelectorAll('[data-v]').forEach(g => g.addEventListener('click', () => {
+    const v = VILLAGE[+g.dataset.v]; if (found.has(v.k)) return; found.add(v.k);
+    g.querySelector('circle').setAttribute('fill', '#B8F0C4'); g.querySelector('circle').setAttribute('stroke', '#1E8E3E');
+    $('#vilList').insertAdjacentHTML('beforeend', `<div class="vi"><span>${v.e}</span><div><b>${v.k}</b>: ${v.t}</div></div>`);
+    $('#found').textContent = `Found ${found.size} of 4` + (found.size === 4 ? ' 🎉' : '');
+    if (found.size === 4) { addStar(); confetti(); }
+  }));
+  $('#cross').onclick = () => {
+    const w = $('#walker'); if (!w || w.dataset.busy) return; w.dataset.busy = 1;
+    const path = [[70, 150], [110, 120], [150, 85], [170, 68], [150, 85], [110, 120], [70, 150]]; const t0 = performance.now(), dur = 2600;
+    $('#mtnInfo').innerHTML = 'Climbing… 🥵';
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur); const f = k * (path.length - 1); const a = Math.floor(f), b = Math.min(path.length - 1, a + 1), u = f - a;
+      w.setAttribute('x', path[a][0] + (path[b][0] - path[a][0]) * u); w.setAttribute('y', path[a][1] + (path[b][1] - path[a][1]) * u);
+      if (k > 0.45 && k < 0.6) $('#mtnInfo').innerHTML = 'Too tall, too steep, and too cold! 🥶';
+      if (k < 1) requestAnimationFrame(step);
+      else { delete w.dataset.busy; $('#mtnInfo').innerHTML = 'The mountains were too hard to cross, so the two villages stayed <b>apart</b>. Each one grew its <b>own way of life</b>: different houses, food, and clothes. Long ago, mountains and deserts kept <b>ancient China</b> apart from other places too.'; }
+    };
+    requestAnimationFrame(step);
+  };
+}
+const VILLAGE = [
+  { k: 'Food', e: '🐟', t: 'fish to eat from the river', x: 120, y: 140 },
+  { k: 'Travel', e: '🛶', t: 'boats carry people and things to trade', x: 245, y: 128 },
+  { k: 'Farming', e: '🌾', t: 'river water helps crops grow', x: 300, y: 82 },
+  { k: 'Protection', e: '🏰', t: 'water all around makes it harder for enemies to reach the town', x: 170, y: 46 }
+];
+function villageSVG() {
+  let s = `<svg viewBox="0 0 360 200" class="scene" role="img" aria-label="River village"><rect width="360" height="200" fill="#D6F0FF"/><rect y="20" width="360" height="180" fill="#8BC86A"/>`;
+  s += `<path d="M0 115 C80 85 140 160 220 128 S330 100 360 112 V146 C330 132 260 172 210 158 S90 122 0 150Z" fill="#3D8FD8"/>`;
+  s += `<ellipse cx="170" cy="46" rx="62" ry="22" fill="#3D8FD8"/><ellipse cx="170" cy="46" rx="42" ry="12" fill="#8BC86A"/>`;
+  s += `<g fill="#E8C35A">${[0, 1, 2].map(i => `<rect x="${276 + i * 18}" y="96" width="14" height="22" rx="3"/>`).join('')}</g>`;
+  s += em(50, 70, 26, '🏡') + em(70, 182, 22, '🏡');
+  s += VILLAGE.map((v, i) => `<g data-v="${i}" style="cursor:pointer"><circle cx="${v.x}" cy="${v.y}" r="21" fill="#fff" fill-opacity=".85" stroke="#E0A100" stroke-width="3" class="pulse"/>${em(v.x, v.y + 1, 24, v.e)}</g>`).join('');
+  return s + '</svg>';
+}
+function mountainSVG() {
+  return `<svg viewBox="0 0 360 200" class="scene" role="img" aria-label="Two villages and mountains"><rect width="360" height="200" fill="#D6ECFF"/><rect y="160" width="360" height="40" fill="#7FB069"/>
+  <path d="M95 165 L170 40 L250 165Z" fill="#6E747E"/><path d="M170 40 L150 72 L190 72Z" fill="#fff"/><path d="M140 165 L210 70 L285 165Z" fill="#8A8F98"/><path d="M210 70 L194 92 L226 92Z" fill="#fff"/>
+  ${em(40, 150, 30, '🏠')}${em(78, 168, 22, '🌽')}<text x="45" y="190" font-size="13" font-weight="800" text-anchor="middle" fill="#A32020">Red Village</text>
+  ${em(310, 148, 30, '🛖')}${em(335, 170, 22, '🍚')}<text x="312" y="190" font-size="13" font-weight="800" text-anchor="middle" fill="#0C447C">Blue Village</text>
+  <text id="walker" x="70" y="150" font-size="26" text-anchor="middle" dominant-baseline="central">🚶</text></svg>`;
 }
 </script>
 </body>
