@@ -136,6 +136,7 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .bin:last-child{grid-column:1/3}
 .bin.flash{background:#B8F0C4}.bin.shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fixbtn{background:#FFF4CC!important;border-color:#E0A100!important;color:#7A5200!important;display:flex!important;align-items:center;justify-content:center;gap:10px}.mcount{background:#C62828;color:#fff;border-radius:14px;padding:1px 10px;font-size:16px}
 .found{font-weight:800;text-align:center;color:var(--navy)}
 .vlist{display:grid;gap:6px;margin-top:6px}.vi{display:flex;gap:8px;align-items:center;background:#E7F6EC;border-radius:10px;padding:6px 10px;font-size:15px;animation:popin .3s}.vi span{font-size:26px}
 
@@ -309,11 +310,32 @@ function speak(text) {
 }
 const sayBtn = t => `<button class="say" data-say="${esc(t)}" aria-label="Hear it">🔊</button>`;
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-say]'); if (b) { e.stopPropagation(); speak(b.dataset.say); } }, true);
+const stripTags = h => String(h).replace(/<[^>]+>/g, '');
+function missKey(q) { return q.id ? q.kind + '|' + q.id : 'p|' + stripTags(q.prompt) + '|' + q.answer; }
+function addMiss(q) {
+  if (!q || q._review) return;
+  const k = missKey(q); const clean = JSON.parse(JSON.stringify(q)); delete clean._missOnce;
+  S.miss = S.miss || []; const e = S.miss.find(m => m.k === k);
+  if (e) { e.n = 2; e.q = clean; } else S.miss.push({ k, q: clean, n: 2 });
+  if (S.miss.length > 40) S.miss.shift(); save();
+}
+function reviewMark(q, firstOk) {
+  const e = (S.miss || []).find(m => m.k === q._k); if (!e) return;
+  if (firstOk) { e.n--; if (e.n <= 0) S.miss = S.miss.filter(m => m !== e); } else e.n = 2; save();
+}
+const missCount = () => (S.miss || []).length;
+function missReview() {
+  const list = S.miss || [];
+  if (!list.length) { app().innerHTML = header('Fix my misses') + `<div class="card center"><div style="font-size:60px">✅🎉</div><h2>Nothing to fix!</h2><p>When you miss a question anywhere in the app, it shows up here so you can practice it again.</p></div><button class="wide" data-go="home">Home 🏠</button>`; bindGo(app()); return; }
+  const qs = shuffle(list).slice(0, 6).map(m => { const q = JSON.parse(JSON.stringify(m.q)); q._review = true; q._k = m.k; if (q.options) q.options = shuffle(q.options); return q; });
+  runRound({ title: 'Fix my misses', qs, key: 'review', mode: 'practice', review: true, again: missReview });
+}
+function missBtn() { const n = missCount(); return n ? `<button class="wide fixbtn" data-go="review">🔧 Fix my misses <span class="mcount">${n}</span></button>` : ''; }
 function addStar(n = 1) { S.stars += n; save(); const e = document.getElementById('starCount'); if (e) { e.textContent = S.stars; e.parentNode.classList.remove('pop'); void e.parentNode.offsetWidth; e.parentNode.classList.add('pop'); } }
 
 function go(view, arg) {
   window.scrollTo(0, 0);
-  ({ home, explore, globe: () => globe(), bonus, progress, tricks: () => tricks(), match: () => matchGame(), sortit: () => sortGame(), maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
+  ({ home, explore, globe: () => globe(), bonus, progress, tricks: () => tricks(), sortit: () => sortGame(), review: missReview, maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
 }
 
 function home() {
@@ -323,7 +345,7 @@ function home() {
     { v: 'maplab', e: '📍', t: 'Map lab', s: 'Find, name, and spell places', c: '#F6A04D' },
     { v: 'wordlab', e: '🔤', t: 'Word lab', s: 'Equator, hemisphere, and more', c: '#4F8EF7' },
     { v: 'featlab', e: '⛰️', t: 'Feature quest', s: 'Rivers and mountains', c: '#7CC35A' },
-    { v: 'tricks', e: '🧠', t: 'Mountain and river tricks', s: 'Memory tricks, memory match, and Sort it', c: '#E0A100' },
+    { v: 'tricks', e: '🧠', t: 'Mountain and river tricks', s: 'Memory tricks and the Sort it game', c: '#E0A100' },
     { v: 'lifelab', e: '🏡', t: 'Life lab', s: 'How land changes how we live', c: '#EF6F5E' },
     { v: 'bonus', e: '⭐', t: 'Bonus facts', s: 'Extra facts for super explorers', c: '#7FB8E6' },
     { v: 'test', e: '🏆', t: 'Practice test', s: 'Like Friday\'s test', c: '#E0A100' }
@@ -331,6 +353,7 @@ function home() {
   const best = k => S.best[k] != null ? `<span class="badge">Best ${S.best[k]}</span>` : '';
   app().innerHTML = header('World Explorer', false) + `
   <div class="hero"><div class="pals">🐻‍❄️🐢🐧</div><h1>Hi explorer! Ready to explore the world?</h1><p>Pip, Coco, and Mo are here to help you get ready for Friday's test.</p></div>
+  ${missBtn()}
   ${mapSVG({ labels: true, fs: 24, uid: 'h' })}
   <div class="zones">${zones.map(z => `<button class="zone" data-go="${z.v}" style="--zc:${z.c}"><span class="ze">${z.e}</span><span class="zt">${z.t}</span><span class="zs">${z.s}</span>${best(z.v)}</button>`).join('')}</div>
   <button class="wide" data-go="progress">📊 My progress</button>
@@ -481,7 +504,7 @@ function featlab(sel) {
   <div class="flist">${ms.map(m => `<div class="fi ${m.t}"><span class="fn">${m.n}</span>${m.t === 'mtn' ? '⛰️' : '💧'} ${m.f}</div>`).join('')}</div>
   <div class="tiny">🌊 Oceans nearby: ${FEATURES[c].oceans}</div>
   <div class="hook"><div class="ht">🧠 Memory trick: ${HOOKS[c].t} ${sayBtn(HOOKS[c].t + '. ' + HOOKS[c].chant)}</div><div class="chant">🎵 ${HOOKS[c].chant}</div></div></div>
-  <div class="gamerow"><button class="zone" data-go="tricks" style="--zc:#E0A100"><span class="ze">🧠</span><span class="zt">All tricks</span></button><button class="zone" data-go="match" style="--zc:#4F8EF7"><span class="ze">🃏</span><span class="zt">Memory match</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button></div>
+  <div class="gamerow"><button class="zone" data-go="tricks" style="--zc:#E0A100"><span class="ze">🧠</span><span class="zt">All tricks</span></button><button class="zone" data-go="review" style="--zc:#4F8EF7"><span class="ze">🔧</span><span class="zt">Fix my misses</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button></div>
   ${featMasteryHTML()}
   <button class="wide go" id="startF">Start Feature quest quiz ▶</button>`;
   bindGo(app());
@@ -517,13 +540,14 @@ function pickFeature(pool = FEATURE_LIST, avoid = []) {
 function featMasteryHTML() {
   return `<div class="card"><div class="ch">🎯 Mountains and rivers you know</div><div class="mgrid">${MATCH_LIST.map(x => { const st = (S.m[fKey(x.f)] || {}).s || 0; return `<div class="mi ${st >= 3 ? 'm3' : st >= 1 ? 'm1' : 'm0'}">${x.t === 'mtn' ? '⛰️' : '💧'} ${x.f}<span>${st >= 3 ? '✅' : st >= 1 ? '🌱' : '…'}</span></div>`; }).join('')}</div><p class="tiny">✅ = right 3 times in a row. The ones you miss come back more often.</p></div>`;
 }
+function featWhere(f) {
+  const wrong = shuffle(CONTS.filter(k => k !== f.c)).slice(0, 3);
+  return { kind: 'mc', prompt: `${f.t === 'mtn' ? '⛰️' : '💧'} Where is the <b>${f.f}</b>?`, options: shuffle([f.c].concat(wrong)).map(k => ({ v: k, t: PLACES[k].emoji + ' ' + PLACES[k].name })), answer: f.c, id: fKey(f.f), why: `The ${f.f} is in ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!` };
+}
 function featQ() {
   const f = pickFeature();
   const type = Math.random();
-  if (type < 0.5) {
-    const wrong = shuffle(CONTS.filter(k => k !== f.c)).slice(0, 3);
-    return { kind: 'mc', prompt: `${f.t === 'mtn' ? '⛰️' : '💧'} Where is the <b>${f.f}</b>?`, options: shuffle([f.c].concat(wrong)).map(k => ({ v: k, t: PLACES[k].emoji + ' ' + PLACES[k].name })), answer: f.c, id: fKey(f.f), why: `The ${f.f} is in ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!` };
-  }
+  if (type < 0.5) return featWhere(f);
   const others = shuffle(FEATURE_LIST.filter(x => x.t === f.t && x.c !== f.c && !(f.f === 'Mount Everest' && x.f === 'Himalaya Mountains'))).filter((x, i, a) => a.findIndex(y => y.c === x.c) === i).slice(0, 3);
   const kind = f.t === 'mtn' ? 'mountain' : 'body of water';
   return qMC(`Which ${kind} is in <b>${PLACES[f.c].name}</b>?`, f.f, others.map(o => o.f), `The ${f.f} is in ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!`, { id: fKey(f.f), emoji: PLACES[f.c].emoji, map: { uid: 'q', cHi: [f.c], dim: f.c } });
@@ -606,7 +630,7 @@ function progress() {
   app().innerHTML = header('My progress') + `
   <div class="card center"><div style="font-size:54px">⭐</div><h2>${S.stars} stars earned</h2><p class="tiny">Best scores so far. Can you fill every bar?</p></div>
   <div class="card"><div class="ch">🏅 Best scores</div>${rows}
-    <div class="pg"><div class="pgn">🃏 Memory match</div><div></div><div class="pgs">${S.best.matchMoves != null ? S.best.matchMoves + ' moves' : 'not yet'}</div></div>
+    <div class="pg"><div class="pgn">🔧 Misses to fix</div><div></div><div class="pgs">${missCount()}</div></div>
     <div class="pg"><div class="pgn">🗂️ Sort it</div><div></div><div class="pgs">${S.best.sortTime != null ? S.best.sortTime + ' sec' : 'not yet'}</div></div></div>
   ${masteryHTML()}
   <button class="wide" data-go="home">Home 🏠</button>`;
@@ -633,6 +657,7 @@ function printView() {
   const files = [
     ['World-Geography-Study-Guide.pdf', '📘 Study guide + practice pack', 'Colorful map, words, features, life and land, then 5 practice pages and a practice test.'],
     ['World-Geography-Answer-Key.pdf', '🔑 Answer key', 'For a grown-up to check the practice pages.'],
+    ['World-Wall-Map.pdf', '🗺️ Wall map (sideways, 2 pages)', 'Page 1: continents, oceans, equator, and prime meridian. Page 2: mountains and rivers with a numbered key.'],
     ['World-Geography-Memory-Tricks.pdf', '🧠 Mountain and river tricks', 'One page for the fridge: a memory trick and a chant for every continent.']
   ];
   app().innerHTML = header('Print center') + `
@@ -653,7 +678,9 @@ function runRound(cfg) {
     const misses = log.filter(l => !l.ok);
     app().innerHTML = header(cfg.title) + `<div class="card center"><div style="font-size:60px">${pal}</div><h2>${score} / ${n}</h2><p>${msg}</p><div class="starrow">${'⭐'.repeat(Math.round(pct * 5))}${'☆'.repeat(5 - Math.round(pct * 5))}</div></div>
     ${misses.length ? `<div class="card"><div class="ch">🔧 Let's fix these</div>${misses.map(m => `<div class="miss"><div>${m.q}</div><div>Your answer: <s>${esc(m.got)}</s></div><div class="ok">✅ ${esc(m.right)}</div><div class="tiny">${m.why || ''}</div></div>`).join('')}</div>` : ''}
-    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="home">Home 🏠</button>`;
+    ${cfg.review ? (missCount() ? `<p class="center tiny">${missCount()} still to fix. Each one needs to be right 2 times.</p>` : '<p class="center"><b>✅ All fixed!</b></p>') : ''}
+    ${cfg.review ? '' : missBtn()}
+    <button class="wide go" id="again">${cfg.review ? (missCount() ? 'Keep fixing 🔧' : 'Check again ↻') : 'Play again ↻'}</button><button class="wide" data-go="home">Home 🏠</button>`;
     bindGo(app()); $('#again').onclick = cfg.again;
     if (mode === 'test') addStar(score);
   }
@@ -661,6 +688,8 @@ function runRound(cfg) {
   function rightText(q) { if (q.kind === 'tap') return PLACES[q.answer].name; if (q.kind === 'hemi') return ({ N: 'Northern', S: 'Southern', E: 'Eastern', W: 'Western' })[q.answer] + ' Hemisphere'; if (q.kind === 'mc') return q.options.find(o => o.v === q.answer).t; return q.answer; }
   function result(q, ok, got) {
     if (q.id) mark(q.id, ok);
+    if (!ok && !q._missOnce) { q._missOnce = true; addMiss(q); }
+    if (cfg.review && (ok || tries >= 1)) { if (!q._rev) { q._rev = true; reviewMark(q, ok && tries === 0); } }
     if (mode === 'test') { log.push({ q: q.prompt, ok, got: answerText(q, got), right: rightText(q), why: q.why }); if (ok) score++; return next(); }
     const fb = $('#fb');
     if (ok) {
@@ -928,7 +957,7 @@ function globeChallenge() {
         glState.hi = id; glDraw(); confetti();
         fb.className = 'fb good'; fb.innerHTML = `<b>${pick(CHEERS)}</b> ${PLACES[id].fact}<button class="wide go" id="nx">Next ▶</button>`;
       } else {
-        tries++;
+        tries++; if (tries === 1) addMiss(qTap(id));
         const nm = got === 'med' ? 'the Mediterranean Sea' : got && PLACES[got] ? `the <b>${PLACES[got].name}</b>` : 'somewhere else';
         if (tries >= 2) {
           mark(id, false); glState.hi = id; glFlyTo(id === 'pacific' ? [-160, 5] : GL_LL[id]);
@@ -1034,7 +1063,7 @@ function packGame() {
       if (picked.size >= 2) return;
       const it = items[+b.dataset.j];
       if (it[2]) { picked.add(+b.dataset.j); b.classList.add('right'); b.disabled = true; }
-      else { wrong++; b.classList.add('wrongb'); b.disabled = true; $('#fb').className = 'fb bad'; $('#fb').innerHTML = `Hmm, a ${it[1]} won't help much in ${SCENES[r.k].to}. Try again!`; }
+      else { if (!wrong) addMiss(qMC(`Which one would you pack for <b>${SCENES[r.k].to}</b>?`, r.ok[0][1], r.no.slice(0, 3).map(x => x[1]), `People there wear ${SCENES[r.k].cloth}.`, { emoji: SCENES[r.k].e })); wrong++; b.classList.add('wrongb'); b.disabled = true; $('#fb').className = 'fb bad'; $('#fb').innerHTML = `Hmm, a ${it[1]} won't help much in ${SCENES[r.k].to}. Try again!`; }
       if (picked.size === 2) {
         if (wrong === 0) { score++; addStar(); }
         confetti();
@@ -1156,7 +1185,7 @@ function featsOf(c) { return MATCH_LIST.filter(x => x.c === c); }
 function tricks() {
   app().innerHTML = header('Mountain and river tricks') + `
   <p class="lead">Spot the pattern for each continent. Say the chant out loud 3 times!</p>
-  <div class="gamerow"><button class="zone" data-go="match" style="--zc:#4F8EF7"><span class="ze">🃏</span><span class="zt">Memory match</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button><button class="zone" data-go="featlab" style="--zc:#7CC35A"><span class="ze">⛰️</span><span class="zt">See the map</span></button></div>
+  <div class="gamerow"><button class="zone" data-go="review" style="--zc:#4F8EF7"><span class="ze">🔧</span><span class="zt">Fix my misses</span></button><button class="zone" data-go="sortit" style="--zc:#EF6F5E"><span class="ze">🗂️</span><span class="zt">Sort it</span></button><button class="zone" data-go="featlab" style="--zc:#7CC35A"><span class="ze">⛰️</span><span class="zt">See the map</span></button></div>
   ${CONTS.map(c => `<div class="tcard" style="--cc:${contColor(c)}">
     <div class="tch">${PLACES[c].emoji} ${PLACES[c].name}</div>
     <div class="tbody"><div class="ht">🧠 ${HOOKS[c].t} ${sayBtn(PLACES[c].name + '. ' + HOOKS[c].t + '. ' + HOOKS[c].chant)}</div>
@@ -1164,49 +1193,8 @@ function tricks() {
     <div class="tip">${HOOKS[c].tip}</div>
     <div class="chant">🎵 ${HOOKS[c].chant}</div></div></div>`).join('')}
   <div class="card"><div class="ch">🖐️ Try it with your hands</div><p>Draw a blank world map. Draw brown triangles ⛰️ for mountains and blue squiggles 💧 for rivers. Say each name out loud as you draw. Then teach the tricks to someone in your family!</p></div>
-  <button class="wide go big" data-go="match">Play Memory match 🃏</button>`;
+  <button class="wide go big" data-go="sortit">Play Sort it 🗂️</button>`;
   bindGo(app());
-}
-
-function matchGame() {
-  const conts = shuffle(CONTS).slice(0, 6);
-  const pairs = conts.map(c => { const pool = featsOf(c); return pickFeature(pool); });
-  const cards = shuffle(pairs.flatMap((f, i) => [{ p: i, side: 'f', f }, { p: i, side: 'c', c: f.c }]));
-  let open = [], done = new Set(), moves = 0, lock = false;
-  app().innerHTML = header('Memory match') + `
-  <p class="lead">Flip two cards. Match each mountain or river ⛰️💧 with its continent!</p>
-  <div class="mstat"><span>Moves: <b id="mv">0</b></span><span>Pairs: <b id="pr">0</b> / 6</span>${S.best.matchMoves != null ? `<span>Best: <b>${S.best.matchMoves}</b></span>` : ''}</div>
-  <div class="mgame">${cards.map((k, i) => `<button class="mcard" data-i="${i}" aria-label="Card"><span class="mf mback">🌍</span><span class="mf mfront ${k.side === 'c' ? 'mcont' : 'mfeat ' + k.f.t}" style="${k.side === 'c' ? '--cc:' + contColor(k.c) : ''}">${k.side === 'c' ? `<i>${PLACES[k.c].emoji}</i>${PLACES[k.c].name}` : `<i>${featIcon(k.f)}</i>${k.f.f}`}</span></button>`).join('')}</div>
-  <div id="fb" class="fb"></div>`;
-  bindGo(app());
-  const els = [...app().querySelectorAll('.mcard')];
-  els.forEach(el => el.onclick = () => {
-    const i = +el.dataset.i; const k = cards[i];
-    if (lock || done.has(k.p) || open.includes(i)) return;
-    el.classList.add('up'); open.push(i);
-    if (open.length < 2) return;
-    moves++; $('#mv').textContent = moves;
-    const [a, b] = open.map(j => cards[j]);
-    if (a.p === b.p && a.side !== b.side) {
-      done.add(a.p); open.forEach(j => els[j].classList.add('got')); open = [];
-      const f = pairs[a.p]; mark(fKey(f.f), true);
-      $('#pr').textContent = done.size;
-      $('#fb').className = 'fb good'; $('#fb').innerHTML = `${featIcon(f)} <b>${f.f}</b> → ${PLACES[f.c].emoji} ${PLACES[f.c].name}. 💡 ${HOOKS[f.c].t}!`;
-      if (done.size === 6) setTimeout(finish, 700);
-    } else {
-      lock = true;
-      $('#fb').className = 'fb bad'; $('#fb').innerHTML = 'Not a match. Remember where they are!';
-      setTimeout(() => { open.forEach(j => els[j].classList.remove('up')); open = []; lock = false; }, 1000);
-    }
-  });
-  function finish() {
-    const best = S.best.matchMoves; const nb = best == null || moves < best; if (nb) S.best.matchMoves = moves; save();
-    const st = moves <= 9 ? 3 : moves <= 13 ? 2 : 1; addStar(st); confetti();
-    app().innerHTML = header('Memory match') + `<div class="card center"><div style="font-size:60px">🃏🎉</div><h2>All 6 pairs in ${moves} moves!</h2><div class="starrow">${'⭐'.repeat(st)}${'☆'.repeat(3 - st)}</div><p>${nb ? 'New best!' : 'Best: ' + best + ' moves. Can you beat it?'}</p><p class="tiny">6 moves is perfect. 9 or fewer gets 3 stars.</p></div>
-    <div class="card"><div class="ch">You matched</div>${pairs.map(f => `<div class="mi" style="margin:4px 0">${featIcon(f)} ${f.f}<span>${PLACES[f.c].emoji} ${PLACES[f.c].name}</span></div>`).join('')}</div>
-    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="tricks">Memory tricks 🧠</button><button class="wide" data-go="home">Home 🏠</button>`;
-    bindGo(app()); $('#again').onclick = matchGame;
-  }
 }
 
 function sortGame() {
@@ -1234,7 +1222,7 @@ function sortGame() {
       if (!items.length) return finish();
       show();
     } else {
-      misses++; missed.add(f.f); mark(fKey(f.f), false);
+      misses++; if (!missed.has(f.f)) addMiss(featWhere(f)); missed.add(f.f); mark(fKey(f.f), false);
       b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400);
       $('#hint').innerHTML = `💡 Think: <b>${HOOKS[f.c].t}</b>`;
       items.push(items.shift()); show();
@@ -1246,7 +1234,7 @@ function sortGame() {
     const st = misses === 0 ? 3 : misses <= 2 ? 2 : 1; addStar(st); confetti();
     app().innerHTML = header('Sort it') + `<div class="card center"><div style="font-size:60px">🗂️🎉</div><h2>Sorted all ${total} in ${secs} second${secs === 1 ? "" : "s"}!</h2><div class="starrow">${'⭐'.repeat(st)}${'☆'.repeat(3 - st)}</div><p>${misses === 0 ? (nb ? 'Perfect, and a new best time!' : 'Perfect! Best time: ' + best + ' sec.') : misses + ' to practice. A best time counts only with no misses.'}</p></div>
     ${missed.size ? `<div class="card"><div class="ch">🔧 Practice these</div>${[...missed].map(n => { const f = MATCH_LIST.find(x => x.f === n); return `<div class="miss"><b>${featIcon(f)} ${f.f}</b> → ${PLACES[f.c].emoji} ${PLACES[f.c].name}<div class="tiny">💡 ${HOOKS[f.c].t}</div></div>`; }).join('')}</div>` : ''}
-    <button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="tricks">Memory tricks 🧠</button><button class="wide" data-go="home">Home 🏠</button>`;
+    ${missBtn()}<button class="wide go" id="again">Play again ↻</button><button class="wide" data-go="tricks">Memory tricks 🧠</button><button class="wide" data-go="home">Home 🏠</button>`;
     bindGo(app()); $('#again').onclick = sortGame;
   }
 }
