@@ -245,6 +245,36 @@ body{display:flex;align-items:flex-start}
 .hlab{animation:fadeIn .4s ease}
 }
 @media (min-width:960px){.hero{justify-content:flex-start}.hero h1{font-size:21px;margin:0}.hero p{margin:0}}
+
+@media (min-width:960px){
+.packwrap{max-width:1100px;margin:0 auto}
+.packscene{display:flex;justify-content:center;border:0;background:none}
+.packscene .sceneimg{height:auto!important;max-height:calc(100vh - 360px)!important;width:auto;max-width:100%;object-fit:contain;border:2px solid var(--line)}
+.packwrap .packgrid{grid-template-columns:repeat(6,minmax(0,1fr));margin-top:10px}
+.packwrap .fb{margin-top:8px}
+}
+
+.ml{display:grid;gap:14px}
+.mlmapcard,.mlside{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px}
+.mlhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.mlk{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#5A6B85}
+.mlbig{font-size:20px;color:var(--navy)}.mlbig b{font-size:30px}
+.mlseg{display:flex;gap:3px}.mlseg i,.mlleg i{display:inline-block;width:14px;height:14px;border-radius:4px}
+.mlseg i{width:16px;height:10px}
+.s0{background:#E6ECF2;border:1.5px dashed #9AAFC4}.s1{background:#9AD3A8;border:1.5px solid #1E8E3E}.s2{background:#1E8E3E;border:1.5px solid #1E8E3E}
+.mlmap{border:0;padding:0;margin:8px 0 6px}
+.mlleg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:#4a5a73;font-weight:600}.mlleg span{display:flex;align-items:center;gap:6px}
+.mlside{display:flex;flex-direction:column;gap:10px}
+.mlmode{display:grid;grid-template-columns:112px 1fr 18px;gap:12px;align-items:center;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px;color:var(--ink)}
+.mlmode:hover{border-color:var(--blue);background:#F6FAFF}
+.mlpv{width:112px;height:auto;display:block;border-radius:10px}
+.mlt{display:flex;flex-direction:column;gap:2px}.mlt b{font-size:18px;color:var(--navy)}.mlt span{font-size:14px;color:#4a5a73;line-height:1.3}
+.mlgo{font-size:26px;color:#9AAFC4;font-weight:300}
+.mlmix{margin:2px 0 0!important}
+.mlfocus{border-top:1.5px dashed var(--line);padding-top:10px;font-size:14px}
+.mlchip{display:inline-block;background:#FFF4CC;color:#7A5200;border-radius:14px;padding:3px 10px;font-weight:700;font-size:13px;margin:6px 6px 0 0}
+@media (prefers-reduced-motion:no-preference){.tgt{transform-box:fill-box;transform-origin:center;animation:tgt 1.6s ease-in-out infinite}@keyframes tgt{50%{transform:scale(1.35);opacity:.5}}.caret{animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:0}}}
+@media (min-width:960px){.ml{grid-template-columns:minmax(0,1.55fr) minmax(330px,1fr);align-items:start}.mlmap .wmap{width:min(100%, calc((100vh - 270px) * 1.97));margin:0 auto}}
 </style>
 </head>
 <body>
@@ -553,17 +583,40 @@ function qMC(prompt, answer, wrong, why, extra = {}) {
   return Object.assign({ kind: 'mc', prompt, options: shuffle([answer].concat(wrong)).map(t => ({ v: t, t })), answer, why }, extra);
 }
 
+function mlStatus(k) { const s = (S.m[k] || {}).s || 0; return s >= 3 ? 2 : s >= 1 ? 1 : 0; }
+function mlPreview(kind) {
+  if (kind === 'spell') return `<svg viewBox="0 0 120 80" class="mlpv"><rect width="120" height="80" rx="10" fill="#EEF5FD"/>${'ATLAN'.split('').map((c, i) => `<g><rect x="${8 + i * 21}" y="26" width="18" height="24" rx="4" fill="#fff" stroke="#9cc3e0"/><text x="${17 + i * 21}" y="39" font-size="13" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#0B2545">${c}</text></g>`).join('')}<rect class="caret" x="113" y="28" width="2.5" height="20" fill="#1D6FD8"/></svg>`;
+  const blob = `<rect width="120" height="80" rx="10" fill="#CDEBFB"/><path d="M14 22 q12-10 26-4 q6 10-4 18 q-8 4-6 12 q-4 6-10 0 q-10-12-6-26z" fill="#F6A04D"/><path d="M34 46 q8 2 8 10 q-2 12-8 16 q-4-8-4-16z" fill="#7CC35A"/><path d="M58 30 q12-4 16 6 q-2 14-8 20 q-6-4-8-12 q-4-8 0-14z" fill="#EF6F5E"/><path d="M62 16 q22-8 44 2 q4 12-8 16 q-16 2-24-4 q-10 0-12-14z" fill="#3FB8AF"/><path d="M92 50 q10-2 14 6 q-4 8-12 4z" fill="#C9925A"/>`;
+  if (kind === 'tap') return `<svg viewBox="0 0 120 80" class="mlpv">${blob}<circle class="tgt" cx="50" cy="38" r="10" fill="none" stroke="#0B2545" stroke-width="2.5"/><circle cx="50" cy="38" r="3" fill="#0B2545"/></svg>`;
+  return `<svg viewBox="0 0 120 80" class="mlpv">${blob}<circle cx="50" cy="38" r="11" fill="#FFD447" stroke="#0B2545" stroke-width="2.5"/><text x="50" y="39" font-size="13" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#0B2545">3</text></svg>`;
+}
 function maplab() {
+  const st = Object.fromEntries(ALL.map(k => [k, mlStatus(k)]));
+  const done = ALL.filter(k => st[k] === 2).length;
+  const focus = ALL.filter(k => st[k] < 2).sort((a, b) => (a === 'atlantic' || a === 'arctic' ? -1 : 0) - (b === 'atlantic' || b === 'arctic' ? -1 : 0)).slice(0, 4);
+  const oceanMarks = OCEANS.map(k => { const ks = k === 'pacific' ? ['pacific', 'pacific2'] : [k]; return ks.map(kk => { const [x, y] = MAP.labels[kk]; const s = st[k];
+    return `<g pointer-events="none"><circle cx="${x}" cy="${y}" r="17" fill="${s === 2 ? '#1E8E3E' : '#fff'}" stroke="${s ? '#1E8E3E' : '#7FA3C2'}" stroke-width="3" ${s === 0 ? 'stroke-dasharray="5 4"' : ''}/>${s === 1 ? `<path d="M ${x} ${y - 17} A 17 17 0 0 1 ${x} ${y + 17} Z" fill="#9AD3A8"/>` : ''}${s === 2 ? `<text x="${x}" y="${y + 1}" font-size="18" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#fff">✓</text>` : ''}<text x="${x}" y="${y + 33}" font-size="17" font-weight="800" text-anchor="middle" fill="#0B4F8A" stroke="#fff" stroke-width="4" paint-order="stroke">${PLACES[k].name.replace(' Ocean', '')}</text></g>`; }).join(''); }).join('');
+  const contMarks = CONTS.filter(k => st[k] === 2).map(k => { const [x, y] = MAP.labels[k]; return `<g pointer-events="none"><circle cx="${x}" cy="${y}" r="15" fill="#1E8E3E" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y + 1}" font-size="16" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#fff">✓</text></g>`; }).join('');
+  const modes = [['tap', 'Find it', 'We name a place. You tap it on the map.'], ['name', 'Name it', 'A number lights up. Pick its name, like your school map.'], ['spell', 'Spell it', 'Type the name and spell it just right.']];
   app().innerHTML = header('Map lab') + `
-  <p class="lead">Pick a game. Each round has 10 questions.</p>
-  <div class="zones one mlz">
-    <button class="zone" data-m="tap" style="--zc:#F6A04D"><span class="ze">👆</span><span class="zt">Find it</span><span class="zs">I say a place, you tap it on the map</span></button>
-    <button class="zone" data-m="name" style="--zc:#3FB8AF"><span class="ze">🔢</span><span class="zt">Name it</span><span class="zs">Like your school map with numbers</span></button>
-    <button class="zone" data-m="spell" style="--zc:#4F8EF7"><span class="ze">✏️</span><span class="zt">Spell it</span><span class="zs">Type the name, spelled just right</span></button>
-    <button class="zone" data-m="mix" style="--zc:#E0A100"><span class="ze">🎲</span><span class="zt">Mix of all 3</span><span class="zs">A bit of everything</span></button>
-  </div>
-  ${masteryHTML()}`;
+  <div class="ml">
+    <section class="mlmapcard">
+      <div class="mlhead"><div><div class="mlk">Your world map</div><div class="mlbig"><b>${done}</b> of 12 places mastered</div></div>
+        <div class="mlseg">${ALL.map(k => `<i class="s${st[k]}" title="${PLACES[k].name}"></i>`).join('')}</div></div>
+      <div class="mapbox mlmap" id="mlmap">${mapSVG({ uid: 'ml', markers: oceanMarks + contMarks })}</div>
+      <div class="mlleg"><span><i class="s0"></i>Not yet</span><span><i class="s1"></i>Learning</span><span><i class="s2"></i>Mastered (right 3 times in a row)</span></div>
+    </section>
+    <section class="mlside">
+      <div class="mlk">Choose a game · 10 questions</div>
+      ${modes.map(([m, t, d]) => `<button class="mlmode" data-m="${m}">${mlPreview(m)}<span class="mlt"><b>${t}</b><span>${d}</span></span><span class="mlgo">›</span></button>`).join('')}
+      <button class="wide go mlmix" data-m="mix">Play a mixed round</button>
+      ${focus.length ? `<div class="mlfocus"><div class="mlk">Coming up more often</div><div>${focus.map(k => `<span class="mlchip">${PLACES[k].name}</span>`).join('')}</div></div>` : '<div class="mlfocus"><b>All 12 mastered!</b> Try Spell it for an extra challenge.</div>'}
+    </section>
+  </div>`;
   bindGo(app());
+  app().querySelectorAll('#mlmap .land').forEach(l => { const k = l.dataset.id, s = st[k];
+    if (s === 0) { l.setAttribute('fill', '#E6ECF2'); l.setAttribute('stroke', '#9AAFC4'); }
+    else if (s === 1) l.setAttribute('fill-opacity', '0.5'); });
   app().querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
     const m = b.dataset.m; const ids = weightedPlaces(10);
     const qs = ids.map((id, i) => { const k = m === 'mix' ? ['tap', 'name', 'spell'][i % 3] : m; return k === 'tap' ? qTap(id) : k === 'name' ? qName(id, i + 1) : qSpell(id); });
@@ -1181,14 +1234,14 @@ function packGame() {
     let picked = new Set(), wrong = 0;
     app().innerHTML = header('Pack for the trip') + `<div class="prog"><div style="width:${i / rounds.length * 100}%"></div></div><div class="qn">Trip ${i + 1} of ${rounds.length}</div>
     <div class="q">🎒 You're going to <b>${SCENES[r.k].to}</b>! Pick the <b>2 things</b> you need.</div>
-    <div class="split"><div class="sl"><div class="scenebox">${sceneSVG(r.k, 200)}</div></div><div class="sr"><div class="packgrid">${items.map((it, j) => `<button class="pk" data-j="${j}"><span>${it[0]}</span>${it[1]}</button>`).join('')}</div>
+    <div class="packwrap"><div class="scenebox packscene">${sceneSVG(r.k, 200)}</div><div><div class="packgrid">${items.map((it, j) => `<button class="pk" data-j="${j}"><span>${it[0]}</span>${it[1]}</button>`).join('')}</div>
     <div id="fb" class="fb"></div></div></div>`;
     bindGo(app());
     app().querySelectorAll('.pk').forEach(b => b.onclick = () => {
       if (picked.size >= 2) return;
       const it = items[+b.dataset.j];
       if (it[2]) { picked.add(+b.dataset.j); b.classList.add('right'); b.disabled = true; }
-      else { if (!wrong) addMiss(qMC(`Which one would you pack for <b>${SCENES[r.k].to}</b>?`, r.ok[0][1], r.no.slice(0, 3).map(x => x[1]), `People there wear ${SCENES[r.k].cloth}.`, { emoji: SCENES[r.k].e })); wrong++; b.classList.add('wrongb'); b.disabled = true; $('#fb').className = 'fb bad'; $('#fb').innerHTML = `Hmm, a ${it[1]} won't help much in ${SCENES[r.k].to}. Try again!`; }
+      else { if (!wrong) addMiss(qMC(`Which one would you pack for <b>${SCENES[r.k].to}</b>?`, r.ok[0][1], r.no.slice(0, 3).map(x => x[1]), `People there wear ${SCENES[r.k].cloth}.`, { emoji: SCENES[r.k].e })); wrong++; b.classList.add('wrongb'); b.disabled = true; $('#fb').className = 'fb bad'; $('#fb').innerHTML = `Hmm, ${it[0]} ${it[1]} won't help much on a trip to ${SCENES[r.k].to}. Try again!`; }
       if (picked.size === 2) {
         if (wrong === 0) { score++; addStar(); }
         confetti();
