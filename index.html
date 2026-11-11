@@ -109,6 +109,10 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .pn{font-weight:800}.pr{font-size:17px;letter-spacing:-4px;white-space:nowrap;overflow:hidden}
 .tinyp{font-size:9px;letter-spacing:0}.pl{grid-column:2;font-size:12px;color:#4a5a73}
 .half{display:inline-block;overflow:hidden;vertical-align:bottom}.pz{font-size:13px;letter-spacing:0;color:#4a5a73;font-weight:700}
+.say{border:0;background:#E3F0FF;border-radius:50%;width:34px;height:34px;font-size:17px;vertical-align:middle;margin-left:4px;padding:0}
+.ckey{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;font-weight:700;margin:6px 2px}
+.sup{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sup div{background:#FFF7DD;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;text-align:center}.sup span{font-size:30px}.sup small{font-size:12px;color:#4a5a73;font-weight:700}.sup b{font-size:17px;color:var(--navy)}
+.pg{display:grid;grid-template-columns:1fr 90px 64px;gap:8px;align-items:center;padding:5px 0;font-size:14px;font-weight:700}.pgb{height:12px;background:#E1EAF3;border-radius:8px;overflow:hidden}.pgb div{height:100%}.pgs{text-align:right;color:#4a5a73;font-size:13px}
 .found{font-weight:800;text-align:center;color:var(--navy)}
 .vlist{display:grid;gap:6px;margin-top:6px}.vi{display:flex;gap:8px;align-items:center;background:#E7F6EC;border-radius:10px;padding:6px 10px;font-size:15px;animation:popin .3s}.vi span{font-size:26px}
 
@@ -134,17 +138,17 @@ const EQ_Y = proj([0, 0])[1];
 const PM_X = proj([0, 0])[0];
 
 const PLACES = {
-  namerica: { name: 'North America', type: 'c', color: '#F6A04D', emoji: '🦅', fact: 'Home of the United States, Canada, and Mexico. Big rivers like the Mississippi and the Rocky Mountains.' },
-  samerica: { name: 'South America', type: 'c', color: '#7CC35A', emoji: '🦜', fact: 'Home of the Amazon rain forest and River and the long Andes Mountains.' },
-  europe: { name: 'Europe', type: 'c', color: '#FFD447', emoji: '🏰', fact: 'A small continent north of Africa. The Alps Mountains and the Danube, Rhine, and Tiber Rivers are here.' },
-  africa: { name: 'Africa', type: 'c', color: '#EF6F5E', emoji: '🦁', fact: 'The Nile River and Mount Kilimanjaro are here. The equator AND the prime meridian both cross Africa.' },
-  asia: { name: 'Asia', type: 'c', color: '#3FB8AF', emoji: '🐼', fact: 'The biggest continent! Mount Everest in the Himalayas is the tallest mountain on Earth.' },
-  australia: { name: 'Australia', type: 'c', color: '#C9925A', emoji: '🦘', fact: 'A continent and a country! The Great Barrier Reef is off its coast.' },
-  antarctica: { name: 'Antarctica', type: 'c', color: '#DCEBF5', emoji: '🐧', fact: 'The icy continent at the very bottom. Penguins live here, but no towns.' },
-  pacific: { name: 'Pacific Ocean', type: 'o', emoji: '🐳', fact: 'The biggest ocean. It is on BOTH sides of the map, between the Americas and Asia/Australia.' },
-  atlantic: { name: 'Atlantic Ocean', type: 'o', emoji: '🐢', fact: 'In the MIDDLE of the map, between the Americas and Europe/Africa. Coco the turtle swims across it!' },
-  indian: { name: 'Indian Ocean', type: 'o', emoji: '🐠', fact: 'Between Africa and Australia, below Asia.' },
-  arctic: { name: 'Arctic Ocean', type: 'o', emoji: '🐻‍❄️', fact: 'At the very TOP of the map, where it is icy cold. Pip the polar bear lives here!' },
+  namerica: { name: 'North America', type: 'c', color: '#F6A04D', emoji: '🦅', fact: 'Home of the United States, Canada, and Mexico. Big rivers like the Mississippi and the Rocky Mountains. It is the third biggest continent.' },
+  samerica: { name: 'South America', type: 'c', color: '#7CC35A', emoji: '🦜', fact: 'Home of the Amazon rain forest and River and the long Andes Mountains. It is the fourth biggest continent.' },
+  europe: { name: 'Europe', type: 'c', color: '#FFD447', emoji: '🏰', fact: 'A small continent north of Africa. The Alps Mountains and the Danube, Rhine, and Tiber Rivers are here. It is the second smallest continent.' },
+  africa: { name: 'Africa', type: 'c', color: '#EF6F5E', emoji: '🦁', fact: 'The Nile River and Mount Kilimanjaro are here. The equator AND the prime meridian both cross Africa. It is the second biggest continent.' },
+  asia: { name: 'Asia', type: 'c', color: '#3FB8AF', emoji: '🐼', fact: 'The biggest continent! Mount Everest in the Himalayas is the tallest mountain on Earth. Most of the world\'s people live here.' },
+  australia: { name: 'Australia', type: 'c', color: '#C9925A', emoji: '🦘', fact: 'The smallest continent, and a country too! The Great Barrier Reef is off its coast.' },
+  antarctica: { name: 'Antarctica', type: 'c', color: '#DCEBF5', emoji: '🐧', fact: 'The icy continent at the very bottom, and the coldest place on Earth. Penguins live here, but no towns.' },
+  pacific: { name: 'Pacific Ocean', type: 'o', emoji: '🐳', fact: 'The biggest ocean, bigger than all the land on Earth put together! It is on BOTH sides of the map, between the Americas and Asia/Australia.' },
+  atlantic: { name: 'Atlantic Ocean', type: 'o', emoji: '🐢', fact: 'The second biggest ocean. It is in the MIDDLE of the map, between the Americas and Europe/Africa. Coco the turtle swims across it!' },
+  indian: { name: 'Indian Ocean', type: 'o', emoji: '🐠', fact: 'Between Africa and Australia, below Asia. The third biggest ocean.' },
+  arctic: { name: 'Arctic Ocean', type: 'o', emoji: '🐻‍❄️', fact: 'The smallest ocean, at the very TOP of the map, where it is icy cold. Pip the polar bear lives here!' },
   southern: { name: 'Southern Ocean', type: 'o', emoji: '🐧', fact: 'At the bottom of the map. It goes all the way around Antarctica.' }
 };
 const CONTS = ['namerica', 'samerica', 'europe', 'africa', 'asia', 'australia', 'antarctica'];
@@ -277,11 +281,16 @@ function header(title, back = true) {
   return `<div class="top">${back ? '<button class="back" data-go="home" aria-label="Back home">⬅︎</button>' : '<span></span>'}<div class="ttl">${title}</div><div class="stars">⭐ <b id="starCount">${S.stars}</b></div></div>`;
 }
 function bindGo(root) { root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go, b.dataset.arg)); }
+function speak(text) {
+  try { if (!window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; u.pitch = 1.1; u.lang = 'en-US'; speechSynthesis.speak(u); } catch (e) {}
+}
+const sayBtn = t => `<button class="say" data-say="${esc(t)}" aria-label="Hear it">🔊</button>`;
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-say]'); if (b) { e.stopPropagation(); speak(b.dataset.say); } }, true);
 function addStar(n = 1) { S.stars += n; save(); const e = document.getElementById('starCount'); if (e) { e.textContent = S.stars; e.parentNode.classList.remove('pop'); void e.parentNode.offsetWidth; e.parentNode.classList.add('pop'); } }
 
 function go(view, arg) {
   window.scrollTo(0, 0);
-  ({ home, explore, globe: () => globe(), bonus, maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
+  ({ home, explore, globe: () => globe(), bonus, progress, maplab, wordlab, featlab, lifelab, test, print: printView })[view](arg);
 }
 
 function home() {
@@ -300,6 +309,7 @@ function home() {
   <div class="hero"><div class="pals">🐻‍❄️🐢🐧</div><h1>Hi explorer! Ready to explore the world?</h1><p>Pip, Coco, and Mo are here to help you get ready for Friday's test.</p></div>
   ${mapSVG({ labels: true, fs: 24, uid: 'h' })}
   <div class="zones">${zones.map(z => `<button class="zone" data-go="${z.v}" style="--zc:${z.c}"><span class="ze">${z.e}</span><span class="zt">${z.t}</span><span class="zs">${z.s}</span>${best(z.v)}</button>`).join('')}</div>
+  <button class="wide" data-go="progress">📊 My progress</button>
   <button class="wide" data-go="print">🖨️ Print center</button>
   <p class="tiny">Tip: turn the phone sideways for a bigger map.</p>`;
   bindGo(app());
@@ -327,7 +337,7 @@ function explore() {
       const p = PLACES[r.id];
       let extra = '';
       if (FEATURES[r.id]) extra = `<div class="mini"><span>⛰️ ${FEATURES[r.id].mtn.join(', ')}</span><span>💧 ${FEATURES[r.id].water.join(', ')}</span></div>`;
-      $('#info').innerHTML = `<div class="ibig">${p.emoji} ${p.name}</div><div>${p.fact}</div>${extra}`;
+      $('#info').innerHTML = `<div class="ibig">${p.emoji} ${p.name} ${sayBtn(p.name)}</div><div>${p.fact}</div>${extra}`;
       svg.querySelectorAll('.land').forEach(l => l.setAttribute('stroke-width', l.dataset.id === r.id ? 3.5 : 0.9));
     });
   };
@@ -406,7 +416,7 @@ function hemiText(ks, alt) {
 function wordlab() {
   app().innerHTML = header('Word lab') + `
   <p class="lead">Learn the 5 words, then play the quiz.</p>
-  ${VOCAB.map(v => `<div class="card vcard"><div class="vw">${v.w}</div><div class="vd">${v.d}</div>${vocabVisual(v.vis)}<div class="trick">💡 ${v.trick}</div></div>`).join('')}
+  ${VOCAB.map(v => `<div class="card vcard"><div class="vw">${v.w} ${sayBtn(v.w + '. ' + v.d)}</div><div class="vd">${v.d}</div>${vocabVisual(v.vis)}<div class="trick">💡 ${v.trick}</div></div>`).join('')}
   <button class="wide go" id="startW">Start the word quiz ▶</button>`;
   bindGo(app());
   $('#startW').onclick = () => runRound({ title: 'Word lab', qs: wordQs(10), key: 'wordlab', mode: 'practice', again: wordlab });
@@ -529,6 +539,9 @@ const BONUSQ = [
   () => qMC('Which is the <b>coldest</b> continent?', 'Antarctica', ['Africa', 'Australia', 'South America'], 'Antarctica is covered in ice.', { emoji: '🥶' }),
   () => qMC('Africa has…', 'a big desert AND rain forests', ['only ice and snow', 'no rivers at all', 'only tall mountains'], 'Africa has the Sahara Desert and rain forests.', { emoji: '🦁' }),
   () => qMC('People lived near water for food, travel, farming, and…', 'protection', ['snowball fights', 'mountain climbing', 'sand castles'], 'Water made it harder for enemies to reach them.', { emoji: '🏞️' }),
+  () => qMC('Which is the <b>biggest ocean</b>?', 'Pacific Ocean', ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean'], 'The Pacific is bigger than all the land on Earth put together!', { emoji: '🐳' }),
+  () => qMC('Which is the <b>smallest continent</b>?', 'Australia', ['Europe', 'Antarctica', 'South America'], 'Australia is the smallest continent.', { emoji: '🦘' }),
+  () => qMC('Which is the <b>smallest ocean</b>?', 'Arctic Ocean', ['Pacific Ocean', 'Southern Ocean', 'Atlantic Ocean'], 'The Arctic is the smallest ocean, at the top of the map.', { emoji: '🐻‍❄️' }),
   () => qMC('Tall mountains could keep ancient societies…', 'apart, so they made their own way of life', ['warm all year', 'next to the ocean', 'all the same'], 'Mountains were hard to cross.', { emoji: '⛰️' })
 ];
 function bonus() {
@@ -538,6 +551,17 @@ function bonus() {
   <button class="wide go" id="startB">Start the bonus quiz ▶</button>`;
   bindGo(app());
   $('#startB').onclick = () => runRound({ title: 'Bonus facts', qs: shuffle(BONUSQ).slice(0, 8).map(f => f()), key: 'bonus', mode: 'practice', again: bonus });
+}
+
+function progress() {
+  const G = [['maplab', '📍 Map lab', 10], ['wordlab', '🔤 Word lab', 10], ['featlab', '⛰️ Feature quest', 10], ['lifelab', '🏡 Life lab quiz', 8], ['pack', '🎒 Pack for the trip', 6], ['globe', '🌎 Globe challenge', 8], ['bonus', '⭐ Bonus quiz', 8], ['test', '🏆 Practice test', 15]];
+  const rows = G.map(([k, n, tot]) => { const b = S.best[k]; const pct = b == null ? 0 : b / tot; return `<div class="pg"><div class="pgn">${n}</div><div class="pgb"><div style="width:${Math.round(pct * 100)}%;background:${pct >= 0.9 ? '#3FB8AF' : pct >= 0.7 ? '#F6C04D' : '#F6A04D'}"></div></div><div class="pgs">${b == null ? 'not yet' : b + ' / ' + tot}</div></div>`; }).join('');
+  app().innerHTML = header('My progress') + `
+  <div class="card center"><div style="font-size:54px">⭐</div><h2>${S.stars} stars earned</h2><p class="tiny">Best scores so far. Can you fill every bar?</p></div>
+  <div class="card"><div class="ch">🏅 Best scores</div>${rows}</div>
+  ${masteryHTML()}
+  <button class="wide" data-go="home">Home 🏠</button>`;
+  bindGo(app());
 }
 
 function test() {
@@ -833,7 +857,7 @@ function glPlaceInfo(k) {
   const p = PLACES[k];
   let extra = k === 'pacific' ? '<div class="mini"><span>🗺️ On a flat map it shows up on both sides. On a globe you can see it is one big ocean.</span></div>' : '';
   if (FEATURES[k]) extra = `<div class="mini"><span>⛰️ ${FEATURES[k].mtn.join(', ')}</span><span>💧 ${FEATURES[k].water.join(', ')}</span></div>`;
-  glInfo(`<div class="ibig">${p.emoji} ${p.name}</div><div>${p.fact}</div>${extra}`);
+  glInfo(`<div class="ibig">${p.emoji} ${p.name} ${sayBtn(p.name)}</div><div>${p.fact}</div>${extra}`);
 }
 
 function globeChallenge() {
@@ -887,7 +911,7 @@ const SCENES = {
 function sceneSVG(k, h = 190) {
   const W = 360, H = 200;
   let s = `<svg viewBox="0 0 ${W} ${H}" class="scene" role="img" aria-label="${SCENES[k].name}" style="max-height:${h}px">`;
-  if (k === 'cold') s += `<rect width="360" height="200" fill="#DCEFFF"/><circle cx="300" cy="40" r="22" fill="#FFF3B0"/><path d="M0 140 Q90 110 180 135 T360 128 V200 H0Z" fill="#FFFFFF" stroke="#B9D8F0"/><path d="M200 145 a40 32 0 0 1 80 0 Z" fill="#F4FAFF" stroke="#9cc3e0" stroke-width="2"/><path d="M215 145 v-12 a12 12 0 0 1 24 0 v12" fill="#9cc3e0"/>` + em(90, 130, 44, '🐻‍❄️') + em(320, 150, 30, '🐧') + em(40, 40, 20, '❄️') + em(150, 30, 16, '❄️') + em(230, 70, 18, '❄️');
+  if (k === 'cold') s += `<rect width="360" height="200" fill="#DCEFFF"/><circle cx="300" cy="40" r="22" fill="#FFF3B0"/><path d="M0 140 Q90 110 180 135 T360 128 V200 H0Z" fill="#FFFFFF" stroke="#B9D8F0"/><path d="M200 145 a40 32 0 0 1 80 0 Z" fill="#F4FAFF" stroke="#9cc3e0" stroke-width="2"/><path d="M215 145 v-12 a12 12 0 0 1 24 0 v12" fill="#9cc3e0"/>` + em(90, 130, 44, '🐻‍❄️') + em(320, 150, 32, '🦭') + em(40, 40, 20, '❄️') + em(150, 30, 16, '❄️') + em(230, 70, 18, '❄️');
   if (k === 'desert') s += `<rect width="360" height="200" fill="#FFE9B8"/><circle cx="290" cy="45" r="30" fill="#FFB703"/><path d="M0 150 Q80 100 170 140 T360 120 V200 H0Z" fill="#E9B872"/><path d="M0 175 Q120 140 240 170 T360 165 V200 H0Z" fill="#D49A55"/>` + em(110, 125, 48, '🐪') + em(250, 120, 40, '🌵') + em(40, 140, 28, '🌵');
   if (k === 'island') s += `<rect width="360" height="200" fill="#CFEBFF"/><circle cx="60" cy="40" r="22" fill="#FFD447"/><rect y="110" width="360" height="90" fill="#4FA8E0"/><ellipse cx="190" cy="125" rx="95" ry="22" fill="#F2D49B"/>` + em(185, 82, 64, '🌴') + em(310, 120, 36, '⛵') + em(60, 160, 26, '🐟') + em(250, 170, 22, '🐠');
   if (k === 'rain') s += `<rect width="360" height="200" fill="#BFE3C0"/><path d="M0 70 Q60 40 120 70 T240 65 T360 70 V200 H0Z" fill="#5DAE5B"/><path d="M0 120 Q80 95 160 120 T360 115 V200 H0Z" fill="#3E8E41"/><rect y="168" width="360" height="32" fill="#7A9E6A"/><rect x="150" y="96" width="76" height="40" fill="#C98B4E" stroke="#7A5230" stroke-width="2"/><path d="M142 98 L188 70 L234 98Z" fill="#8B5A2B"/><rect x="156" y="136" width="5" height="40" fill="#7A5230"/><rect x="215" y="136" width="5" height="40" fill="#7A5230"/>` + em(60, 70, 36, '🦜') + em(300, 110, 46, '🌴') + em(80, 140, 34, '🍌') + `<g stroke="#5AA7E0" stroke-width="2.5" stroke-linecap="round">${[[30, 20], [100, 10], [200, 25], [280, 15], [330, 40], [250, 50]].map(([x, y]) => `<line x1="${x}" y1="${y}" x2="${x - 5}" y2="${y + 14}"/>`).join('')}</g>`;
@@ -978,19 +1002,21 @@ function packGame() {
 
 const PEOPLE = [['asia', 9.6, 'about 4.8 billion'], ['africa', 3, 'about 1.5 billion'], ['europe', 1.5, 'about 750 million'], ['namerica', 1.2, 'about 600 million'], ['samerica', 0.9, 'about 440 million'], ['australia', 0.06, 'about 27 million'], ['antarctica', 0, 'no one lives there']];
 const CLIMATE = [
-  { ll: [40, -71], e: '🧊', t: 'Antarctica is the coldest place on Earth. It is covered in thick ice.' },
-  { ll: [10, 23], e: '🏜️', t: 'The Sahara in Africa is a huge, hot desert.' },
-  { ll: [22, -1], e: '🌴', t: 'Africa also has rain forests near the equator, where it is hot and rainy.' },
-  { ll: [-62, -5], e: '🌴', t: 'The Amazon rain forest in South America is the biggest rain forest in the world.' },
-  { ll: [-42, 74], e: '❄️', t: 'Up north near the Arctic Ocean, it is cold and icy most of the year.' },
-  { ll: [86, 30], e: '🏔️', t: 'The Himalayas in Asia are so high that snow stays on top all year.' },
-  { ll: [132, -24], e: '🏜️', t: 'Much of Australia is hot, dry desert called the Outback.' },
-  { ll: [-95, 40], e: '🌻', t: 'Much of North America has warm summers and cold, snowy winters.' }
+  { ll: [40, -72], e: '🧊', t: '<b>Freezing.</b> Antarctica is the coldest place on Earth. It is covered in thick ice all year.' },
+  { ll: [-42, 74], e: '❄️', t: '<b>Cold and icy.</b> Up north by the Arctic Ocean, it is snowy and icy most of the year.' },
+  { ll: [86, 31], e: '🏔️', t: '<b>Snowy mountains.</b> The Himalayas in Asia are so high that snow stays on top all year.' },
+  { ll: [10, 23], e: '🏜️', t: '<b>Hot and dry.</b> The Sahara in Africa is a huge desert with very little rain.' },
+  { ll: [132, -24], e: '🏜️', t: '<b>Hot and dry.</b> Much of Australia is desert, called the Outback.' },
+  { ll: [22, -1], e: '🌧️', t: '<b>Hot and rainy.</b> Africa has rain forests near the equator, where it rains almost every day.' },
+  { ll: [-62, -5], e: '🌧️', t: '<b>Hot and rainy.</b> The Amazon in South America is the biggest rain forest in the world.' },
+  { ll: [-95, 42], e: '🍂', t: '<b>Four seasons.</b> Much of North America has warm summers, colorful falls, and cold, snowy winters.' },
+  { ll: [12, 49], e: '🌦️', t: '<b>Mild and rainy.</b> Much of Europe has cool weather with some rain all year.' }
 ];
+const CLIM_KEY = [['🧊', 'freezing'], ['❄️', 'cold and icy'], ['🏔️', 'snowy mountains'], ['🏜️', 'hot and dry'], ['🌧️', 'hot and rainy'], ['🍂', 'four seasons'], ['🌦️', 'mild and rainy']];
 function bonus() {
   const tiles = Array.from({ length: 10 }, (_, i) => `<div class="tile ${i < 7 ? 'sea' : 'landt'}" style="animation-delay:${i * 0.12}s">${i < 7 ? '🌊' : '🌳'}</div>`).join('');
   const bars = PEOPLE.map(([k, n, lbl]) => `<div class="pbar"><div class="pn">${PLACES[k].emoji} ${PLACES[k].name}</div><div class="pr">${n === 0 ? '<span class="pz">🚫 no towns</span>' : '<span class="pi">' + (n < 0.25 ? '<span class="tinyp">🧍</span>' : '🧍'.repeat(Math.max(1, Math.round(n)))) + '</span>'}</div><div class="pl">${lbl}</div></div>`).join('');
-  const climMarks = CLIMATE.map((c, i) => { const [x, y] = proj(c.ll); return `<g data-cl="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="30" fill="#fff" stroke="#0B2545" stroke-width="3"/><text x="${x}" y="${y + 2}" font-size="34" text-anchor="middle" dominant-baseline="central">${c.e}</text></g>`; }).join('');
+  const climMarks = CLIMATE.map((c, i) => { const [x, y] = proj(c.ll); return `<g data-cl="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="35" fill="#fff" stroke="#0B2545" stroke-width="3"/><text x="${x}" y="${y + 2}" font-size="42" text-anchor="middle" dominant-baseline="central">${c.e}</text></g>`; }).join('');
   app().innerHTML = header('Bonus facts') + `
   <p class="lead">⭐ Extra facts for super explorers. Tap and play to discover them!</p>
   <div class="card"><div class="ch">🌊 Oceans cover most of Earth</div>
@@ -1001,9 +1027,12 @@ function bonus() {
   <div class="card"><div class="ch">👨‍👩‍👧 Which continents have the most people?</div>
     <p class="tiny">Each 🧍 = about 500 million people</p>${bars}
     <p><b>Asia</b> has the most people. <b>Antarctica</b> has no countries and no towns, only visiting scientists. <b>Australia</b> is a continent AND a country.</p></div>
+  <div class="card"><div class="ch">🏆 Biggest and smallest</div>
+    <div class="sup">${[['🐼', 'Biggest continent', 'Asia'], ['🦘', 'Smallest continent', 'Australia'], ['🐳', 'Biggest ocean', 'Pacific'], ['🐻‍❄️', 'Smallest ocean', 'Arctic'], ['🧊', 'Coldest continent', 'Antarctica'], ['👨‍👩‍👧', 'Most people', 'Asia']].map(x => `<div><span>${x[0]}</span><small>${x[1]}</small><b>${x[2]}</b></div>`).join('')}</div></div>
   <div class="card"><div class="ch">🌡️ Every continent has its own climate</div>
     <p>Tap a sticker on the map!</p>
     <div class="mapbox" id="clim">${mapSVG({ uid: 'cl', markers: climMarks })}</div>
+    <div class="ckey">${CLIM_KEY.map(c => `<span>${c[0]} ${c[1]}</span>`).join('')}</div>
     <div id="climInfo" class="info">Climate is the usual weather in a place. It changes how people and animals live.</div></div>
   <div class="card"><div class="ch">🏞️ Why do people live near water?</div>
     <p>Find the <b>4 reasons</b> hiding in the picture. Tap them!</p>
@@ -1018,8 +1047,8 @@ function bonus() {
   $('#startB').onclick = () => runRound({ title: 'Bonus facts', qs: shuffle(BONUSQ).slice(0, 8).map(f => f()), key: 'bonus', mode: 'practice', again: bonus });
   $('#replayT').onclick = () => { const t = $('#tiles'); t.innerHTML = tiles; };
   app().querySelectorAll('[data-cl]').forEach(g => g.addEventListener('click', () => {
-    const c = CLIMATE[+g.dataset.cl]; app().querySelectorAll('[data-cl] circle').forEach(x => { x.setAttribute('r', 30); x.setAttribute('fill', '#fff'); });
-    g.querySelector('circle').setAttribute('r', 36); g.querySelector('circle').setAttribute('fill', '#FFE08A');
+    const c = CLIMATE[+g.dataset.cl]; app().querySelectorAll('[data-cl] circle').forEach(x => { x.setAttribute('r', 35); x.setAttribute('fill', '#fff'); });
+    g.querySelector('circle').setAttribute('r', 42); g.querySelector('circle').setAttribute('fill', '#FFE08A');
     $('#climInfo').innerHTML = `<div class="ibig">${c.e}</div>${c.t}`;
   }));
   const found = new Set();
