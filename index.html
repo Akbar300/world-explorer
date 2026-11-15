@@ -67,8 +67,10 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .qn{font-size:13px;color:#4a5a73;margin:4px 0}
 .q{font-size:21px;font-weight:700;color:var(--navy);margin:6px 0}
 .qe{font-size:30px;margin-right:6px;vertical-align:middle}
-.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.opt{min-height:58px;border-radius:14px;border:2px solid var(--line);background:#fff;font-weight:700;font-size:17px;padding:8px}
+.opts{display:grid;grid-template-columns:1fr;gap:12px;margin-top:10px}
+.opts.row{display:flex;flex-wrap:wrap;gap:12px}
+.opts.row .opt{flex:1 1 0;min-width:64px;text-align:center;justify-content:center}
+.opt{min-height:64px;border-radius:14px;border:2px solid var(--line);background:#fff;font-weight:700;font-size:22px;padding:12px 14px;overflow-wrap:normal;word-break:normal;hyphens:none;line-height:1.25}
 .opt:active{transform:scale(.98)}
 .opt.wrongb{background:#FDECEC;border-color:var(--bad);opacity:.7}
 .opt.right{background:#E7F6EC;border-color:var(--good)}
@@ -144,7 +146,7 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .globebox svg{display:block;width:100%;max-width:520px;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .whyt{margin:4px 0 6px}.why .ch{border-left-color:#C62828}
 @media (prefers-reduced-motion:reduce){.pulse,.conf span,.stars.pop{animation:none}}
-@media (min-width:700px){.opts{grid-template-columns:repeat(4,minmax(0,1fr))}.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:600px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}.opts.row{display:flex;flex-wrap:wrap}}
 
 #side{display:none}
 @media (min-width:960px){
@@ -199,8 +201,9 @@ body{display:flex;align-items:flex-start}
 .homemap .wmap{width:min(100%, calc((100vh - 420px) * 1.97))}
 .home .below .toggles{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:420px}.home .below .tg[data-t=hemi]{grid-column:1/3}
 .qmap .wmap{width:min(100%, calc((100vh - 330px) * 1.97))}
-.qwide .opts{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:1000px;margin-left:auto;margin-right:auto}
+.qwide .opts{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:1000px;margin-left:auto;margin-right:auto}
 .qwide .opts.two{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:600px}
+.qwide .opts.row{display:flex;flex-wrap:wrap!important;max-width:1000px}
 .qwide .fb,.qwide .spell,.qwide .err,.qwide .hintb{max-width:1000px;margin-left:auto;margin-right:auto}
 .qwide .q{text-align:center}
 .below{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}.below .info{margin-top:0}.below .toggles{max-width:330px}
@@ -366,6 +369,7 @@ const app = () => document.getElementById('app');
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const compactOpt=s=>{const t=String(s==null?'':s).replace(/<[^>]+>/g,' ').replace(/&nbsp;?/gi,' ').replace(/&[a-z]+;/gi,' ').replace(/\s+/g,' ').trim();if(!t)return false;if(/^[€£$]?[\d.,:\-/%]+$/.test(t))return true;const raw=t.replace(/\s+/g,'');if(/^\d+[×x÷+\-]\d+$/.test(raw)&&raw.length<=8)return true;return !/\s/.test(t)&&t.length<=8};
 
 function oceanAt(lon, lat) {
   if (lat >= 66) return 'arctic';
@@ -910,7 +914,7 @@ function runRound(cfg) {
     const prog = `<div class="prog"><div style="width:${(i / qs.length) * 100}%"></div></div><div class="qn">Question ${i + 1} of ${qs.length}</div>`;
     let body = `<div class="q">${q.emoji ? `<span class="qe">${q.emoji}</span>` : ''}${q.prompt}</div>`;
     const mapPart = q.map ? `<div class="mapbox" id="qm">${mapSVG(q.map)}</div>` : '';
-    if (q.kind === 'mc') body += `<div class="opts ${q.options.length === 2 ? 'two' : ''}">${q.options.map(o => `<button class="opt" data-v="${esc(o.v)}">${o.t}</button>`).join('')}</div>`;
+    if (q.kind === 'mc') { const compact = q.options.every(o => compactOpt(o.t)); body += `<div class="opts${compact ? ' row' : (q.options.length === 2 ? ' two' : '')}">${q.options.map(o => `<button class="opt" data-v="${esc(o.v)}">${o.t}</button>`).join('')}</div>`; }
     if (q.kind === 'spell') body += `<div class="spell"><input id="sp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type the name"><button class="go" id="spGo">Check</button></div><div id="spErr" class="err"></div><button class="hintb" id="spHint">💡 Hint: first letters</button>`;
     const ctrl = body.slice(body.indexOf('</div>') + 6); const qtext = body.slice(0, body.indexOf('</div>') + 6);
     app().innerHTML = header(cfg.title) + `<div class="${q.map ? 'qwide' : 'narrow'}">` + prog + qtext + (q.map ? mapPart.replace('class="mapbox"', 'class="mapbox bigmap qmap"') : '') + ctrl + `<div id="fb" class="fb"></div></div>`;
